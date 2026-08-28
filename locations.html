@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TurfX | Locations & 3D Viewer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Roboto', 'sans-serif'], display: ['Bebas Neue', 'sans-serif'] },
+                    colors: { brand: { orange: '#ff5a00', navy: '#0b132b', blue: '#1c2541' } }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Roboto', sans-serif; background-color: #f8f9fa; color: #0b132b; }
+        .nav-link { position: relative; transition: color 0.3s; }
+        .nav-link:hover { color: #ff5a00; }
+        #canvas-container { width: 100%; height: 65vh; cursor: grab; background: #0b132b; }
+        #canvas-container:active { cursor: grabbing; }
+        .clip-polygon { clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%); }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="w-full bg-brand-navy py-6 shadow-xl">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+            <a href="index.html" class="text-4xl font-display text-white tracking-wider">TURF<span class="text-brand-orange">X</span></a>
+            <div class="hidden md:flex space-x-8 font-bold text-lg text-white font-display tracking-widest">
+                <a href="index.html" class="nav-link">HOME</a>
+                <a href="locations.html" class="text-brand-orange">VENUES & 3D</a>
+                <a href="book.html" class="nav-link">BOOK PITCH</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 3D Viewer Section -->
+    <section class="bg-brand-navy clip-polygon pb-20 pt-10">
+        <div class="max-w-7xl mx-auto px-6 text-center mb-8">
+            <h2 class="text-6xl font-display text-white mb-2 tracking-wider">INTERACTIVE <span class="text-brand-orange">3D ARENA</span></h2>
+            <p class="text-gray-400 font-bold uppercase tracking-widest border-b-2 border-brand-orange inline-block pb-2">Drag to rotate • Scroll to zoom</p>
+        </div>
+        <div id="canvas-container" class="mx-auto max-w-6xl overflow-hidden border-8 border-brand-orange shadow-2xl relative">
+            <!-- 3D Overlay Stats -->
+            <div class="absolute bottom-4 left-4 right-4 z-10 grid grid-cols-3 gap-4 text-center pointer-events-none">
+                <div class="bg-brand-navy/80 backdrop-blur border border-brand-orange p-4 transform skew-x-[-5deg]">
+                    <h4 class="text-brand-orange font-display tracking-widest text-lg">PITCH SIZE</h4>
+                    <p class="text-white font-bold text-xl">40m x 60m</p>
+                </div>
+                <div class="bg-brand-navy/80 backdrop-blur border border-brand-orange p-4 transform skew-x-[-5deg]">
+                    <h4 class="text-brand-orange font-display tracking-widest text-lg">SURFACE</h4>
+                    <p class="text-white font-bold text-xl">FIFA PRO 4G</p>
+                </div>
+                <div class="bg-brand-navy/80 backdrop-blur border border-brand-orange p-4 transform skew-x-[-5deg]">
+                    <h4 class="text-brand-orange font-display tracking-widest text-lg">FORMAT</h4>
+                    <p class="text-white font-bold text-xl">5v5 / 7v7</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Locations & Materials -->
+    <section class="py-24 bg-white relative -mt-10 z-0">
+        <div class="max-w-7xl mx-auto px-6">
+            
+            <div class="flex flex-col md:flex-row gap-12 items-center mb-24" data-aos="fade-up">
+                <div class="w-full md:w-1/2 relative group">
+                    <div class="absolute inset-0 bg-brand-orange transform translate-x-4 translate-y-4 group-hover:translate-x-2 group-hover:translate-y-2 transition-transform duration-300"></div>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Badminton_Singles_in_Tokyo_2020.jpg/1024px-Badminton_Singles_in_Tokyo_2020.jpg" class="relative z-10 w-full h-auto grayscale group-hover:grayscale-0 transition duration-500 shadow-xl border-4 border-brand-navy">
+                </div>
+                <div class="w-full md:w-1/2">
+                    <h3 class="text-5xl font-display text-brand-navy mb-4">INDOOR <span class="text-brand-orange">BADMINTON COURTS</span></h3>
+                    <p class="text-gray-600 text-lg font-medium leading-relaxed mb-6">Professional indoor badminton courts with BWF approved synthetic mats over wooden shock-absorbing flooring. Perfect for intense singles or doubles matches.</p>
+                    <ul class="space-y-4 text-brand-navy font-bold text-lg">
+                        <li class="flex items-center"><span class="text-brand-orange text-2xl mr-3">✓</span> BWF Approved Synthetic Mats</li>
+                        <li class="flex items-center"><span class="text-brand-orange text-2xl mr-3">✓</span> Zero-Glare LED Lighting</li>
+                        <li class="flex items-center"><span class="text-brand-orange text-2xl mr-3">✓</span> AC & Ventilation System</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row-reverse gap-12 items-center" data-aos="fade-up">
+                <div class="w-full md:w-1/2 relative group">
+                    <div class="absolute inset-0 bg-brand-navy transform -translate-x-4 translate-y-4 group-hover:-translate-x-2 group-hover:translate-y-2 transition-transform duration-300"></div>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Gol_de_la_final_de_f%C3%BAtbol_femenino_en_los_Juegos_Ol%C3%ADmpicos_de_la_Juventud_2018.jpg/1024px-Gol_de_la_final_de_f%C3%BAtbol_femenino_en_los_Juegos_Ol%C3%ADmpicos_de_la_Juventud_2018.jpg" class="relative z-10 w-full h-auto grayscale group-hover:grayscale-0 transition duration-500 shadow-xl border-4 border-brand-orange">
+                </div>
+                <div class="w-full md:w-1/2">
+                    <h3 class="text-5xl font-display text-brand-navy mb-4">NORTHSIDE <span class="text-brand-orange">PITCH</span></h3>
+                    <p class="text-gray-600 text-lg font-medium leading-relaxed mb-6">A larger 7v7 facility in the quiet suburbs. Built with monofilament yarns that mimic the exact texture of natural grass.</p>
+                    <ul class="space-y-4 text-brand-navy font-bold text-lg">
+                        <li class="flex items-center"><span class="text-brand-orange text-2xl mr-3">✓</span> FIFA Quality Pro Turf</li>
+                        <li class="flex items-center"><span class="text-brand-orange text-2xl mr-3">✓</span> Free On-site Parking</li>
+                        <li class="flex items-center"><span class="text-brand-orange text-2xl mr-3">✓</span> Warm-up Area</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-brand-navy text-white py-10 border-t-8 border-brand-orange text-center">
+        <p class="font-display text-2xl tracking-widest text-gray-400">&copy; 2026 TURFX ARENA</p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.2/vanilla-tilt.min.js"></script>
+    <script>
+        AOS.init({ once: true, offset: 50 });
+        
+        // Add tilt to all images
+        VanillaTilt.init(document.querySelectorAll("img"), {
+            max: 10,
+            speed: 400,
+            glare: true,
+            "max-glare": 0.5
+        });
+
+        // Better Three.js 3D Pitch
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0b132b);
+
+        const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+        camera.position.set(0, 50, 70);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.shadowMap.enabled = true;
+        container.appendChild(renderer.domElement);
+
+        // Lights
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+        scene.add(ambientLight);
+        
+        const spotLight = new THREE.SpotLight(0xffffff, 1);
+        spotLight.position.set(0, 100, 0);
+        spotLight.castShadow = true;
+        scene.add(spotLight);
+
+        const pitchGroup = new THREE.Group();
+        scene.add(pitchGroup);
+
+        // Ground Base (Dirt/Concrete)
+        const baseGeo = new THREE.BoxGeometry(44, 1, 64);
+        const baseMat = new THREE.MeshStandardMaterial({ color: 0x333333 });
+        const base = new THREE.Mesh(baseGeo, baseMat);
+        base.position.y = -0.5;
+        base.receiveShadow = true;
+        pitchGroup.add(base);
+
+        // The Pitch (Green Grass) - Shared
+        const pitchGeo = new THREE.BoxGeometry(40, 0.2, 60);
+        const pitchMat = new THREE.MeshStandardMaterial({ color: 0x10b981, roughness: 1 });
+        const pitch = new THREE.Mesh(pitchGeo, pitchMat);
+        pitch.position.y = 0.1;
+        pitch.receiveShadow = true;
+        pitchGroup.add(pitch);
+
+        // --- FIELD LINES & GOALS ---
+        const lineMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        const centerLine = new THREE.Mesh(new THREE.BoxGeometry(38, 0.3, 0.5), lineMat);
+        centerLine.position.y = 0.2;
+        pitchGroup.add(centerLine);
+        const borderGeo = new THREE.BoxGeometry(38, 0.3, 58);
+        const border = new THREE.Mesh(borderGeo, lineMat);
+        border.position.y = 0.15;
+        pitchGroup.add(border);
+        const innerGeo = new THREE.BoxGeometry(37, 0.35, 57);
+        const innerMat = new THREE.MeshStandardMaterial({ color: 0x10b981 });
+        const inner = new THREE.Mesh(innerGeo, innerMat);
+        inner.position.y = 0.16;
+        pitchGroup.add(inner);
+        const circleGeo = new THREE.TorusGeometry(5, 0.25, 16, 100);
+        const circle = new THREE.Mesh(circleGeo, lineMat);
+        circle.rotation.x = Math.PI / 2;
+        circle.position.y = 0.3;
+        pitchGroup.add(circle);
+        
+        const goalMat = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.8 });
+        function createGoal(zPos) {
+            const group = new THREE.Group();
+            const post1 = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 5), goalMat);
+            post1.position.set(-6, 2.5, 0);
+            const post2 = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 5), goalMat);
+            post2.position.set(6, 2.5, 0);
+            const crossbar = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 12), goalMat);
+            crossbar.rotation.z = Math.PI / 2;
+            crossbar.position.set(0, 5, 0);
+            group.add(post1); group.add(post2); group.add(crossbar);
+            group.position.z = zPos;
+            return group;
+        }
+        pitchGroup.add(createGoal(-29));
+        pitchGroup.add(createGoal(29));
+
+        const ballGeo = new THREE.SphereGeometry(0.8, 32, 32);
+        const ballMat = new THREE.MeshStandardMaterial({ color: 0xffa500 });
+        const ball = new THREE.Mesh(ballGeo, ballMat);
+        ball.position.set(0, 1.2, 0);
+        ball.castShadow = true;
+        pitchGroup.add(ball);
+
+        // --- NEW EQUIPMENT ---
+        // Cricket Bat
+        const batGroup = new THREE.Group();
+        const handle = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 1.5), new THREE.MeshStandardMaterial({color: 0x888888}));
+        handle.position.y = 1.5;
+        const blade = new THREE.Mesh(new THREE.BoxGeometry(0.6, 3, 0.2), new THREE.MeshStandardMaterial({color: 0xdeb887}));
+        blade.position.y = -0.75;
+        batGroup.add(handle); batGroup.add(blade);
+        batGroup.position.set(-6, 0.2, 5);
+        batGroup.rotation.x = -Math.PI / 2 + 0.1;
+        batGroup.rotation.z = Math.PI / 4;
+        batGroup.castShadow = true;
+        pitchGroup.add(batGroup);
+
+        // Cricket Ball (Red)
+        const cBall = new THREE.Mesh(new THREE.SphereGeometry(0.2, 16, 16), new THREE.MeshStandardMaterial({color: 0xdc143c}));
+        cBall.position.set(-5, 0.4, 5);
+        cBall.castShadow = true;
+        pitchGroup.add(cBall);
+
+        // Badminton Racket
+        const racketGroup = new THREE.Group();
+        const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 2), new THREE.MeshStandardMaterial({color: 0xcccccc}));
+        shaft.position.y = 1;
+        const head = new THREE.Mesh(new THREE.TorusGeometry(0.6, 0.05, 16, 100), new THREE.MeshStandardMaterial({color: 0x222222}));
+        head.position.y = 2.6;
+        head.scale.y = 1.3; 
+        const strings = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.55, 0.02), new THREE.MeshStandardMaterial({color: 0xffffff, transparent: true, opacity: 0.3}));
+        strings.position.y = 2.6;
+        strings.rotation.x = Math.PI / 2;
+        strings.scale.z = 1.3;
+        racketGroup.add(shaft); racketGroup.add(head); racketGroup.add(strings);
+        racketGroup.position.set(8, 0.2, -6);
+        racketGroup.rotation.x = -Math.PI / 2 + 0.05;
+        racketGroup.rotation.z = -Math.PI / 6;
+        pitchGroup.add(racketGroup);
+
+        // Shuttlecock
+        const shuttleGroup = new THREE.Group();
+        const cork = new THREE.Mesh(new THREE.SphereGeometry(0.2, 16, 16), new THREE.MeshStandardMaterial({color: 0xffffff}));
+        const feathers = new THREE.Mesh(new THREE.ConeGeometry(0.4, 0.6, 16), new THREE.MeshStandardMaterial({color: 0xffffff, transparent: true, opacity: 0.8}));
+        feathers.position.y = 0.4;
+        feathers.rotation.x = Math.PI;
+        shuttleGroup.add(cork); shuttleGroup.add(feathers);
+        shuttleGroup.position.set(7, 0.4, -4);
+        shuttleGroup.rotation.x = Math.PI / 2;
+        pitchGroup.add(shuttleGroup);
+
+        // Look at center
+        camera.lookAt(0, 0, 0);
+
+        // Professional OrbitControls for realistic interaction
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true; // Smooth inertia
+        controls.dampingFactor = 0.05;
+        controls.enablePan = false;    // Don't allow panning away from turf
+        controls.minDistance = 30;     // Max zoom in
+        controls.maxDistance = 150;    // Max zoom out
+        controls.maxPolarAngle = Math.PI / 2 - 0.05; // Prevent camera from going under the ground
+
+        // Animation Loop
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update(); // Required for damping
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        });
+    </script>
+</body>
+</html>
