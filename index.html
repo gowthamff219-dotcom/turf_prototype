@@ -30,9 +30,33 @@
         body { font-family: 'Roboto', sans-serif; background-color: #f8f9fa; color: #0b132b; }
         .clip-polygon { clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%); }
         .hero-bg {
-            background: linear-gradient(135deg, rgba(11,19,43,0.95), rgba(28,37,65,0.85)), 
-                        url('https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Football_pitch_02.jpg/1920px-Football_pitch_02.jpg') center/cover fixed;
+            /* Fallback background if video fails */
+            background: #0b132b;
         }
+        .video-wrapper {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            overflow: hidden; z-index: 0; pointer-events: none;
+        }
+        .video-wrapper iframe {
+            width: 100vw; height: 56.25vw; min-height: 100vh; min-width: 177.77vh;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        }
+        .video-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, rgba(11,19,43,0.85), rgba(255,90,0,0.4));
+            z-index: 1;
+        }
+        
+        /* Glassmorphism */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
         .btn-sport {
             position: relative; overflow: hidden; transform: skewX(-10deg);
             display: inline-block; transition: all 0.3s;
@@ -59,6 +83,26 @@
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
         }
+        
+        /* Image Loop Gallery */
+        .img-marquee-wrapper {
+            background: #0b132b; overflow: hidden; white-space: nowrap;
+            position: relative; width: 100%; padding: 40px 0; z-index: 10;
+        }
+        .img-marquee-content {
+            display: inline-block;
+            animation: img-marquee 30s linear infinite;
+        }
+        .img-marquee-content img {
+            display: inline-block; height: 300px; width: 400px; object-fit: cover;
+            margin: 0 15px; border: 4px solid #ff5a00; transform: skewX(-4deg);
+            border-radius: 8px; transition: transform 0.3s;
+        }
+        .img-marquee-content img:hover { transform: skewX(0deg) scale(1.05); }
+        @keyframes img-marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
     </style>
 </head>
 <body>
@@ -77,10 +121,17 @@
 
     <!-- Hero Section -->
     <section class="hero-bg min-h-screen flex items-center clip-polygon relative pb-20">
+        <!-- YouTube Background -->
+        <div class="video-wrapper">
+            <!-- Nike Football commercial reference -->
+            <iframe src="https://www.youtube.com/embed/3XviR7esUvo?autoplay=1&mute=1&loop=1&playlist=3XviR7esUvo&controls=0&showinfo=0&rel=0&modestbranding=1&disablekb=1" frameborder="0" allow="autoplay; encrypted-media"></iframe>
+        </div>
+        <div class="video-overlay"></div>
+        
         <div class="max-w-7xl mx-auto px-6 w-full relative z-10 pt-20">
-            <div class="max-w-3xl" data-aos="fade-right" data-aos-duration="1000">
+            <div class="max-w-3xl glass-card p-10 rounded-2xl transform skew-x-[-2deg]" data-aos="fade-right" data-aos-duration="1000">
                 <h1 class="text-7xl md:text-9xl font-display text-white mb-2 leading-none uppercase">
-                    Unleash Your <br><span class="text-brand-orange">Potential</span>
+                    Unleash Your <br><span class="text-brand-orange drop-shadow-[0_0_10px_rgba(255,90,0,0.8)]">Potential</span>
                 </h1>
                 <p class="text-xl md:text-2xl text-gray-300 mb-10 font-bold max-w-2xl border-l-4 border-brand-orange pl-4 uppercase italic">
                     The Ultimate Football, Cricket & Badminton Experience. Premium 4G Turf. Indoor Courts. Pure Adrenaline.
@@ -102,32 +153,55 @@
     </div>
 
     <!-- Features -->
-    <section class="py-24 bg-white relative -mt-20 z-0">
+    <section class="py-24 bg-brand-navy relative -mt-20 z-0">
         <div class="max-w-7xl mx-auto px-6">
             <div class="text-center mb-16" data-aos="zoom-in" data-aos-duration="1000">
-                <h2 class="text-5xl font-display text-brand-navy">PLAY LIKE A <span class="text-brand-orange">CHAMPION</span></h2>
+                <h2 class="text-5xl font-display text-white">PLAY LIKE A <span class="text-brand-orange">CHAMPION</span></h2>
                 <div class="w-24 h-2 bg-brand-orange mx-auto mt-4 transform -skew-x-12"></div>
             </div>
             
             <div class="grid md:grid-cols-3 gap-8">
-                <div data-tilt data-tilt-max="10" data-tilt-speed="400" data-tilt-glare="true" data-tilt-max-glare="0.5" class="bg-gray-100 p-8 transform transition hover:-translate-y-2 border-b-4 border-transparent hover:border-brand-orange shadow-lg" data-aos="flip-left" data-aos-delay="0">
-                    <h3 class="text-3xl font-display text-brand-navy mb-4">FIFA Quality Turf</h3>
-                    <p class="text-gray-600 font-medium">State-of-the-art synthetic grass engineered for perfect ball roll and maximum joint protection during intense sprints.</p>
+                <div data-tilt data-tilt-max="10" data-tilt-speed="400" data-tilt-glare="true" data-tilt-max-glare="0.5" class="glass-card p-8 transform transition hover:-translate-y-2 border-b-4 border-transparent hover:border-brand-orange rounded-xl" data-aos="flip-left" data-aos-delay="0">
+                    <h3 class="text-3xl font-display text-brand-orange mb-4">FIFA Quality Turf</h3>
+                    <p class="text-gray-300 font-medium text-lg">State-of-the-art synthetic grass engineered for perfect ball roll and maximum joint protection during intense sprints.</p>
                 </div>
-                <div data-tilt data-tilt-max="10" data-tilt-speed="400" data-tilt-glare="true" data-tilt-max-glare="0.5" class="bg-gray-100 p-8 transform transition hover:-translate-y-2 border-b-4 border-transparent hover:border-brand-orange shadow-lg" data-aos="flip-up" data-aos-delay="100">
-                    <h3 class="text-3xl font-display text-brand-navy mb-4">Stadium Lighting</h3>
-                    <p class="text-gray-600 font-medium">500-lux anti-glare LED floodlights that turn night into day, ensuring you never lose sight of the ball.</p>
+                <div data-tilt data-tilt-max="10" data-tilt-speed="400" data-tilt-glare="true" data-tilt-max-glare="0.5" class="glass-card p-8 transform transition hover:-translate-y-2 border-b-4 border-transparent hover:border-brand-orange rounded-xl" data-aos="flip-up" data-aos-delay="100">
+                    <h3 class="text-3xl font-display text-brand-orange mb-4">Stadium Lighting</h3>
+                    <p class="text-gray-300 font-medium text-lg">500-lux anti-glare LED floodlights that turn night into day, ensuring you never lose sight of the ball.</p>
                 </div>
-                <div data-tilt data-tilt-max="10" data-tilt-speed="400" data-tilt-glare="true" data-tilt-max-glare="0.5" class="bg-gray-100 p-8 transform transition hover:-translate-y-2 border-b-4 border-transparent hover:border-brand-orange shadow-lg" data-aos="flip-right" data-aos-delay="200">
-                    <h3 class="text-3xl font-display text-brand-navy mb-4">Instant Booking</h3>
-                    <p class="text-gray-600 font-medium">Secure your slot instantly through our custom online system. No hassle, just show up and play.</p>
+                <div data-tilt data-tilt-max="10" data-tilt-speed="400" data-tilt-glare="true" data-tilt-max-glare="0.5" class="glass-card p-8 transform transition hover:-translate-y-2 border-b-4 border-transparent hover:border-brand-orange rounded-xl" data-aos="flip-right" data-aos-delay="200">
+                    <h3 class="text-3xl font-display text-brand-orange mb-4">Instant Booking</h3>
+                    <p class="text-gray-300 font-medium text-lg">Secure your slot instantly through our custom online system. No hassle, just show up and play.</p>
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- Image Looping Gallery -->
+    <section class="img-marquee-wrapper border-y-8 border-brand-orange">
+        <div class="img-marquee-content">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/0/02/Panorama_of_Anfield_with_new_main_stand_%2829676137824%29.jpg" alt="Anfield">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/f/fd/Olympics_2012_Mixed_Doubles_Final.jpg" alt="Badminton">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/a/ad/Camp_Nou_aerial.jpg" alt="Camp Nou">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/1/1f/Church_Times_Cricket_Cup_final_2019%2C_Wicket_3.jpg" alt="Cricket Pitch">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/6/68/Wembley_Stadium%2C_illuminated.jpg" alt="Wembley">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/4/42/2017_AFL_Grand_Final_panorama_during_national_anthem.jpg" alt="Melbourne Cricket Ground">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/1/1a/2023_07_31_arne_mueseler_00060-Verbessert-RR_%2853106651455%29.jpg" alt="Old Trafford">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/4/49/Sydney_Cricket_Ground_%2824509044622%29.jpg" alt="Sydney Cricket Ground">
+            <!-- Duplicate for infinite effect -->
+            <img src="https://upload.wikimedia.org/wikipedia/commons/0/02/Panorama_of_Anfield_with_new_main_stand_%2829676137824%29.jpg" alt="Anfield">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/f/fd/Olympics_2012_Mixed_Doubles_Final.jpg" alt="Badminton">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/a/ad/Camp_Nou_aerial.jpg" alt="Camp Nou">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/1/1f/Church_Times_Cricket_Cup_final_2019%2C_Wicket_3.jpg" alt="Cricket Pitch">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/6/68/Wembley_Stadium%2C_illuminated.jpg" alt="Wembley">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/4/42/2017_AFL_Grand_Final_panorama_during_national_anthem.jpg" alt="Melbourne Cricket Ground">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/1/1a/2023_07_31_arne_mueseler_00060-Verbessert-RR_%2853106651455%29.jpg" alt="Old Trafford">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/4/49/Sydney_Cricket_Ground_%2824509044622%29.jpg" alt="Sydney Cricket Ground">
+        </div>
+    </section>
+
     <!-- Footer / Store Description -->
-    <footer class="bg-brand-navy text-white pt-20 pb-10 border-t-8 border-brand-orange">
+    <footer class="bg-brand-navy text-white pt-20 pb-10">
         <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 mb-12">
             <div data-aos="fade-right" data-aos-duration="1000">
                 <a href="index.html" class="text-5xl font-display tracking-wider mb-6 inline-block">TURF<span class="text-brand-orange">X</span></a>
