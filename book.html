@@ -224,7 +224,7 @@
             container.innerHTML = ''; loader.classList.remove('hidden');
 
             try {
-                const res = await fetch(`/api/slots/${loc}/${turf}/${selectedDateStr}`);
+                const res = await fetch(`http://localhost:3000/api/slots/${loc}/${turf}/${selectedDateStr}`);
                 const slots = await res.json();
                 loader.classList.add('hidden');
                 
@@ -298,7 +298,7 @@
             btn.textContent = 'WAIT...'; btn.disabled = true;
 
             try {
-                const res = await fetch('/api/book', {
+                const res = await fetch('http://localhost:3000/api/book', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
@@ -326,7 +326,7 @@
             list.innerHTML = '<p class="text-brand-orange animate-pulse font-bold">Searching...</p>';
             
             try {
-                const res = await fetch(`/api/my-bookings/${phone}`);
+                const res = await fetch(`http://localhost:3000/api/my-bookings/${phone}`);
                 const bookings = await res.json();
                 
                 if(bookings.length === 0) {
@@ -349,7 +349,7 @@
         async function cancelBooking(id) {
             if(!confirm("Are you sure you want to cancel this booking?")) return;
             try {
-                const res = await fetch(`/api/book/${id}`, { method: 'DELETE' });
+                const res = await fetch(`http://localhost:3000/api/book/${id}`, { method: 'DELETE' });
                 if(res.ok) {
                     showToast('Booking cancelled.');
                     fetchMyBookings();

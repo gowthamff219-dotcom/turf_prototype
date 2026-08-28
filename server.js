@@ -8,8 +8,11 @@ const port = 3000;
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
-
+// Serve HTML pages explicitly to keep other files secure
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+app.get('/index.html', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+app.get('/book.html', (req, res) => res.sendFile(path.join(__dirname, 'book.html')));
+app.get('/locations.html', (req, res) => res.sendFile(path.join(__dirname, 'locations.html')));
 // Connect to Database
 const db = new sqlite3.Database('./turf.db', (err) => {
     if (err) {
