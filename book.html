@@ -214,6 +214,19 @@
         document.getElementById('locationSelect').addEventListener('change', fetchSlots);
         document.getElementById('turfSelect').addEventListener('change', fetchSlots);
 
+        // LocalStorage DB Implementation for GitHub Pages
+        function getDB() { return JSON.parse(localStorage.getItem('turfx_bookings') || '[]'); }
+        function saveDB(data) { localStorage.setItem('turfx_bookings', JSON.stringify(data)); }
+        
+        function getPriceForSlot(timeSlot, location) {
+            const isPM = timeSlot.includes('PM');
+            let hour = parseInt(timeSlot.split(':')[0]);
+            if (isPM && hour !== 12) hour += 12;
+            if (!isPM && hour === 12) hour = 0;
+            const prices = { 'downtown': 2000, 'northside': 1500, 'eastside': 1200, 'westend': 1800, 'central': 2500 };
+            return hour >= 17 ? (prices[location] || 1500) + 500 : (prices[location] || 1500);
+        }
+
         async function fetchSlots() {
             if(!selectedDateStr) return;
             const loc = document.getElementById('locationSelect').value;
@@ -223,38 +236,45 @@
             
             container.innerHTML = ''; loader.classList.remove('hidden');
 
-            try {
-                const res = await fetch(`http://localhost:3000/api/slots/${loc}/${turf}/${selectedDateStr}`);
-                const slots = await res.json();
+            // Simulate network delay for aesthetic loader
+            setTimeout(() => {
+                const allSlots = [
+                    "9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "1:00 PM", "2:00 PM",
+                    "3:00 PM", "4:00 PM", "5:00 PM", "6:00 PM", "7:00 PM", "8:00 PM", "9:00 PM"
+                ];
+                const db = getDB();
+                const bookedMap = {};
+                db.filter(b => b.location === loc && b.turfId === turf && b.date === selectedDateStr)
+                  .forEach(b => bookedMap[b.slot] = b.customerName);
+
                 loader.classList.add('hidden');
                 
-                slots.forEach(slot => {
+                allSlots.forEach(time => {
+                    const isBooked = !!bookedMap[time];
+                    const price = getPriceForSlot(time, loc);
                     const el = document.createElement('div');
-                    el.className = `slot-card border-4 p-5 bg-white ${slot.isBooked ? 'border-gray-200 bg-gray-50 opacity-50' : 'border-brand-navy cursor-pointer hover:bg-brand-navy hover:text-white group'}`;
+                    el.className = `slot-card border-4 p-5 bg-white ${isBooked ? 'border-gray-200 bg-gray-50 opacity-50' : 'border-brand-navy cursor-pointer hover:bg-brand-navy hover:text-white group'}`;
                     
-                    if(slot.isBooked) {
+                    if(isBooked) {
                         el.innerHTML = `
                             <div class="slot-card-inner flex justify-between items-center">
-                                <span class="text-2xl font-display text-gray-400">${slot.time}</span>
+                                <span class="text-2xl font-display text-gray-400">${time}</span>
                                 <span class="text-sm font-bold text-gray-500 bg-gray-200 px-2 py-1 uppercase">Booked</span>
                             </div>`;
                     } else {
-                        el.onclick = () => openBookingModal(slot);
+                        el.onclick = () => openBookingModal({time, price});
                         el.innerHTML = `
                             <div class="slot-card-inner">
                                 <div class="flex justify-between items-center mb-2">
-                                    <span class="text-2xl font-display text-brand-navy group-hover:text-white">${slot.time}</span>
-                                    <span class="text-xl font-display text-brand-orange">₹${slot.price}</span>
+                                    <span class="text-2xl font-display text-brand-navy group-hover:text-white">${time}</span>
+                                    <span class="text-xl font-display text-brand-orange">₹${price}</span>
                                 </div>
                                 <div class="text-sm font-bold text-gray-400 group-hover:text-brand-orange">SELECT SLOT &rarr;</div>
                             </div>`;
                     }
                     container.appendChild(el);
                 });
-            } catch(e) {
-                loader.classList.add('hidden');
-                container.innerHTML = '<div class="col-span-full text-center text-brand-orange font-bold">Error connecting to server.</div>';
-            }
+            }, 300);
         }
 
         // Modals & Booking
@@ -297,26 +317,34 @@
 
             btn.textContent = 'WAIT...'; btn.disabled = true;
 
-            try {
-                const res = await fetch('http://localhost:3000/api/book', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        location: document.getElementById('locationSelect').value,
-                        turfId: document.getElementById('turfSelect').value,
-                        date: selectedDateStr, 
-                        slot: selectedSlotObj.time, 
-                        customerName, phone, paymentMethod
-                    })
-                });
-                const data = await res.json();
+            setTimeout(() => {
+                const db = getDB();
+                const loc = document.getElementById('locationSelect').value;
+                const turf = document.getElementById('turfSelect').value;
                 
-                if (res.ok) {
-                    showToast(`BOOKING CONFIRMED!`);
-                    closeModal('bookingModal'); fetchSlots();
-                } else showToast(data.error || 'Failed to book.', true);
-            } catch(e) { showToast('Network Error', true); }
-            finally { btn.textContent = 'PAY & BOOK'; btn.disabled = false; }
+                // Check if already booked
+                if(db.find(b => b.location === loc && b.turfId === turf && b.date === selectedDateStr && b.slot === selectedSlotObj.time)) {
+                    showToast('Slot already booked!', true);
+                    btn.textContent = 'PAY & BOOK'; btn.disabled = false;
+                    return;
+                }
+
+                db.push({
+                    id: Date.now(), // Generate unique ID
+                    location: loc,
+                    turfId: turf,
+                    date: selectedDateStr,
+                    slot: selectedSlotObj.time,
+                    customerName, phone, paymentMethod,
+                    price: selectedSlotObj.price
+                });
+                saveDB(db);
+
+                showToast(`BOOKING CONFIRMED!`);
+                closeModal('bookingModal'); 
+                fetchSlots();
+                btn.textContent = 'PAY & BOOK'; btn.disabled = false;
+            }, 400);
         }
 
         async function fetchMyBookings() {
@@ -325,9 +353,9 @@
             const list = document.getElementById('myBookingsList');
             list.innerHTML = '<p class="text-brand-orange animate-pulse font-bold">Searching...</p>';
             
-            try {
-                const res = await fetch(`http://localhost:3000/api/my-bookings/${phone}`);
-                const bookings = await res.json();
+            setTimeout(() => {
+                const db = getDB();
+                const bookings = db.filter(b => b.phone === phone).sort((a,b) => b.date.localeCompare(a.date));
                 
                 if(bookings.length === 0) {
                     list.innerHTML = '<p class="text-gray-500 font-bold">No bookings found for this number.</p>';
@@ -343,19 +371,17 @@
                         <button onclick="cancelBooking(${b.id})" class="text-red-500 hover:text-red-700 font-bold uppercase underline">Cancel</button>
                     </div>
                 `).join('');
-            } catch(e) { list.innerHTML = '<p class="text-red-500">Error fetching bookings</p>'; }
+            }, 300);
         }
 
         async function cancelBooking(id) {
             if(!confirm("Are you sure you want to cancel this booking?")) return;
-            try {
-                const res = await fetch(`http://localhost:3000/api/book/${id}`, { method: 'DELETE' });
-                if(res.ok) {
-                    showToast('Booking cancelled.');
-                    fetchMyBookings();
-                    fetchSlots(); // Refresh slots in background
-                }
-            } catch(e) { showToast('Failed to cancel', true); }
+            const db = getDB();
+            const newDb = db.filter(b => b.id !== id);
+            saveDB(newDb);
+            showToast('Booking cancelled.');
+            fetchMyBookings();
+            fetchSlots();
         }
 
         // Initialize VanillaTilt for cards
