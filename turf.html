@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5TH YARD TURF | Turf Specifications</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Montserrat', 'sans-serif'], display: ['Oswald', 'sans-serif'] },
+                    colors: { brand: { primary: '#ff6b00', dark: '#111111', gray: '#2d3748', white: '#ffffff' } }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #111111; color: #ffffff; overflow-x: hidden; }
+        .glass-panel {
+            background: rgba(45, 55, 72, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 12px;
+        }
+        .feature-item {
+            transition: transform 0.3s, background 0.3s;
+        }
+        .feature-item:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 107, 0, 0.1);
+            border-color: #ff6b00;
+        }
+        .clip-slant { clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%); }
+        .hero-banner {
+            background: linear-gradient(to bottom, rgba(17,17,17,0.7), rgba(17,17,17,1)),
+                        url('https://images.unsplash.com/photo-1518605368461-1e1e11415175?auto=format&fit=crop&w=1920&q=80') center/cover;
+        }
+    
+        /* --- Premium Animations --- */
+        .btn-primary {
+            position: relative; overflow: hidden;
+            display: inline-block; transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            z-index: 1;
+        }
+        .btn-primary::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: all 0.6s ease; z-index: -1;
+        }
+        .btn-primary:hover::before { left: 100%; }
+        .btn-primary:hover {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 10px 20px -10px rgba(255, 107, 0, 0.8), 0 0 20px rgba(255, 107, 0, 0.4);
+            border-color: #ff6b00;
+        }
+        
+        .mouse-glow {
+            position: fixed; width: 400px; height: 400px; background: radial-gradient(circle, rgba(255,107,0,0.15) 0%, transparent 70%);
+            border-radius: 50%; pointer-events: none; z-index: 50; mix-blend-mode: screen;
+            transform: translate(-50%, -50%); transition: top 0.1s, left 0.1s;
+        }
+
+        @keyframes titleReveal {
+            0% { opacity: 0; transform: translateY(40px) scale(0.9); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        
+        .anim-title-word {
+            display: inline-block;
+            opacity: 0;
+            animation: titleReveal 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+        
+        @keyframes textGlow {
+            0% { text-shadow: 0 0 10px rgba(255, 107, 0, 0.2), 0 0 20px rgba(255, 107, 0, 0.1); }
+            50% { text-shadow: 0 0 20px rgba(255, 107, 0, 0.6), 0 0 40px rgba(255, 107, 0, 0.3); }
+            100% { text-shadow: 0 0 10px rgba(255, 107, 0, 0.2), 0 0 20px rgba(255, 107, 0, 0.1); }
+        }
+        
+        .anim-glow {
+            display: inline-block;
+            animation: textGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes fadeUpDelayed {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        
+        .anim-desc {
+            opacity: 0;
+            animation: fadeUpDelayed 1s cubic-bezier(0.2, 0.8, 0.2, 1) 0.5s forwards;
+        }
+        /* -------------------------- */
+
+</style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 py-6 transition-all duration-300 bg-brand-dark/90 backdrop-blur-md border-b border-white/10" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+            <a href="index.html" class="text-3xl font-display font-bold tracking-widest text-white">
+                5TH YARD <span class="text-brand-primary">TURF</span>
+            </a>
+            <div class="hidden md:flex space-x-8 font-bold text-sm tracking-widest">
+                <a href="index.html" class="hover:text-brand-primary transition-colors text-white uppercase">Home</a>
+                <a href="turf.html" class="text-brand-primary transition-colors uppercase">Turf Specs</a>
+                <a href="book.html" class="hover:text-brand-primary transition-colors text-white uppercase">Book Now</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="hero-banner pt-40 pb-20 clip-slant">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <h1 class="text-5xl md:text-7xl font-display font-bold text-white mb-4 uppercase tracking-wider">
+    <span class="anim-title-word" style="animation-delay: 0.1s;">The</span>
+    <span class="anim-title-word text-brand-primary" style="animation-delay: 0.3s;"><span class="anim-glow inline-block">Arena</span></span>
+</h1>
+            <p class="text-xl text-gray-300 max-w-2xl mx-auto anim-desc">Premium 4G artificial grass built for professional-grade football and high-intensity cricket.</p>
+        </div>
+    </header>
+
+    <!-- Visual Showcase -->
+    <section class="py-16 -mt-10 relative z-10">
+        <div class="max-w-7xl mx-auto px-6 space-y-6">
+            <!-- Row 1: Sports Equipment -->
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="glass-panel overflow-hidden group" data-aos="fade-up" data-aos-delay="100">
+                    <img src="https://images.pexels.com/photos/274422/pexels-photo-274422.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Football" class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-700">
+                    <div class="p-4 border-t border-white/10">
+                        <h3 class="font-display text-2xl text-brand-primary uppercase">Football</h3>
+                    </div>
+                </div>
+                <div class="glass-panel overflow-hidden group" data-aos="fade-up" data-aos-delay="200">
+                    <img src="assets/tennis-balls.jpg" alt="Tennis Balls" class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-700">
+                    <div class="p-4 border-t border-white/10">
+                        <h3 class="font-display text-2xl text-brand-primary uppercase">Tennis Balls</h3>
+                    </div>
+                </div>
+                <div class="glass-panel overflow-hidden group" data-aos="fade-up" data-aos-delay="300">
+                    <img src="assets/cricket-gear.jpg" alt="Cricket Bat, Ball and Stumps" class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-700">
+                    <div class="p-4 border-t border-white/10">
+                        <h3 class="font-display text-2xl text-brand-primary uppercase">Cricket Gear</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 2: Turf Views -->
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="glass-panel overflow-hidden group" data-aos="fade-up" data-aos-delay="100">
+                    <img src="assets/turf-front-view.jpg" alt="Turf Front View" class="w-full h-[500px] object-cover object-center group-hover:scale-105 transition-transform duration-700">
+                    <div class="p-4 border-t border-white/10">
+                        <h3 class="font-display text-2xl text-brand-primary uppercase">Arena Front View</h3>
+                    </div>
+                </div>
+                <div class="glass-panel overflow-hidden group bg-black/40" data-aos="fade-up" data-aos-delay="200">
+                    <img src="assets/turf-top-view.png" alt="Turf Top View" class="w-full h-[500px] object-contain object-center group-hover:scale-105 transition-transform duration-700 p-2">
+                    <div class="p-4 border-t border-white/10">
+                        <h3 class="font-display text-2xl text-brand-primary uppercase">Arena Top View</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Turf Specifications -->
+    <section class="py-20 bg-brand-dark">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-display font-bold uppercase tracking-wider" data-aos="fade-up">Turf <span class="text-brand-primary">Specifications</span></h2>
+                <div class="w-24 h-1 bg-brand-primary mx-auto mt-6" data-aos="zoom-in"></div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-12">
+                <!-- Core Details -->
+                <div class="space-y-6">
+                    <div class="glass-panel p-6 feature-item" data-aos="fade-right">
+                        <h4 class="text-brand-primary font-bold uppercase tracking-widest text-sm mb-1">Turf Type</h4>
+                        <p class="text-xl font-medium text-white">Football + Cricket Turf (Multi-purpose)</p>
+                    </div>
+                    <div class="glass-panel p-6 feature-item" data-aos="fade-right" data-aos-delay="100">
+                        <h4 class="text-brand-primary font-bold uppercase tracking-widest text-sm mb-1">Number of Turfs</h4>
+                        <p class="text-xl font-medium text-white">1 Exclusive Arena</p>
+                    </div>
+                    <div class="glass-panel p-6 feature-item" data-aos="fade-right" data-aos-delay="200">
+                        <h4 class="text-brand-primary font-bold uppercase tracking-widest text-sm mb-1">Dimensions / Size</h4>
+                        <p class="text-xl font-medium text-white">[Insert Exact Dimensions Here] e.g. 100ft x 60ft</p>
+                    </div>
+                    <div class="glass-panel p-6 feature-item" data-aos="fade-right" data-aos-delay="300">
+                        <h4 class="text-brand-primary font-bold uppercase tracking-widest text-sm mb-1">Surface & Flooring</h4>
+                        <p class="text-gray-300">Premium 4G artificial synthetic grass with shock-absorbing rubber infill. FIFA quality standard for joint protection and optimal ball bounce.</p>
+                    </div>
+                </div>
+
+                <!-- Facilities -->
+                <div class="space-y-6">
+                    <div class="glass-panel p-6 feature-item border border-brand-primary bg-brand-primary/5" data-aos="fade-left">
+                        <h4 class="text-brand-primary font-bold uppercase tracking-widest text-sm mb-1">Pricing</h4>
+                        <p class="text-3xl font-display font-bold text-white mb-2">₹1,100 <span class="text-lg text-gray-400 font-sans font-normal">/ hour</span></p>
+                        <p class="text-gray-300 text-sm">Flexible booking: Extend by 30 mins for ₹550.</p>
+                    </div>
+                    <div class="glass-panel p-6 feature-item" data-aos="fade-left" data-aos-delay="100">
+                        <h4 class="text-brand-primary font-bold uppercase tracking-widest text-sm mb-1">Lighting</h4>
+                        <p class="text-gray-300">High-intensity 500-lux LED floodlights. Anti-glare system perfect for high balls during night matches.</p>
+                    </div>
+                    <div class="glass-panel p-6 feature-item" data-aos="fade-left" data-aos-delay="200">
+                        <h4 class="text-brand-primary font-bold uppercase tracking-widest text-sm mb-1">Facilities</h4>
+                        <ul class="list-disc list-inside text-gray-300 space-y-2 mt-2">
+                            <li>Secure on-site parking</li>
+                            <li>Hygienic washrooms & changing rooms</li>
+                            <li>Spectator seating area with mesh protection</li>
+                            <li>First-aid kit available on premises</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rules & CTA -->
+    <section class="py-20 border-t border-white/10 relative overflow-hidden">
+        <!-- Background element -->
+        <div class="absolute top-0 right-0 w-96 h-96 bg-brand-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
+            <div data-aos="fade-right">
+                <h3 class="text-3xl font-display font-bold uppercase tracking-wider mb-6">Turf <span class="text-brand-primary">Rules</span></h3>
+                <ul class="space-y-4 text-gray-300">
+                    <li class="flex items-start">
+                        <svg class="w-6 h-6 text-brand-primary mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        <span>Only appropriate sports shoes (turf shoes or flat soles) are allowed. No metal studs.</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-6 h-6 text-brand-primary mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        <span>No food or chewing gum inside the playing arena.</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-6 h-6 text-brand-primary mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        <span>Please vacate the pitch promptly when your booked time slot ends to respect the next players.</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="glass-panel p-10 text-center relative z-10" data-aos="zoom-in">
+                <h3 class="text-3xl font-display font-bold uppercase mb-4 text-white">Ready to Play?</h3>
+                <p class="text-gray-300 mb-8">Lock in your slot now and experience the best turf in the city.</p>
+                <a href="book.html" class="inline-block bg-brand-primary text-brand-dark font-display font-bold text-xl px-10 py-4 uppercase tracking-widest hover:bg-white transition-colors duration-300 rounded-sm">
+                    Book the Turf Now
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black py-12 border-t border-brand-primary/20">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <h2 class="text-3xl font-display font-bold tracking-widest text-white mb-6">5TH YARD <span class="text-brand-primary">TURF</span></h2>
+            <div class="flex justify-center space-x-6 text-gray-400 font-medium mb-8 uppercase text-sm tracking-wider">
+                <a href="index.html" class="hover:text-brand-primary transition">Home</a>
+                <a href="turf.html" class="text-brand-primary transition">Turf Specs</a>
+                <a href="book.html" class="hover:text-brand-primary transition">Book Now</a>
+            </div>
+            <p class="text-gray-600 text-sm">© 2026 5TH YARD TURF. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 800, once: true });
+    </script>
+
+    <div id="mouseGlow" class="mouse-glow" style="top: -1000px; left: -1000px;"></div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const glow = document.getElementById('mouseGlow');
+            document.addEventListener('mousemove', (e) => {
+                if(glow) {
+                    glow.style.left = e.clientX + 'px';
+                    glow.style.top = e.clientY + 'px';
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

@@ -3,35 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TurfX | Premium Sports Arenas</title>
+    <title>5TH YARD TURF | Premium Football & Cricket Arena</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Roboto', 'sans-serif'],
-                        display: ['Bebas Neue', 'sans-serif'],
-                    },
-                    colors: {
-                        brand: { 
-                            orange: '#ff5a00', 
-                            navy: '#0b132b',
-                            blue: '#1c2541'
-                        }
-                    }
+                    fontFamily: { sans: ['Montserrat', 'sans-serif'], display: ['Oswald', 'sans-serif'] },
+                    colors: { brand: { primary: '#ff6b00', dark: '#111111', gray: '#2d3748', white: '#ffffff' } }
                 }
             }
         }
     </script>
     <style>
-        body { font-family: 'Roboto', sans-serif; background-color: #f8f9fa; color: #0b132b; }
-        .clip-polygon { clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%); }
+        body { font-family: 'Montserrat', sans-serif; background-color: #111111; color: #ffffff; overflow-x: hidden; scroll-behavior: smooth; }
         .hero-bg {
-            /* Fallback background if video fails */
-            background: #0b132b;
+            background: #111111;
         }
         .video-wrapper {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -39,149 +28,311 @@
         }
         .video-wrapper iframe {
             width: 100vw; height: 56.25vw; min-height: 100vh; min-width: 177.77vh;
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(1.2);
+            pointer-events: none;
         }
         .video-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, rgba(11,19,43,0.85), rgba(255,90,0,0.4));
+            background: linear-gradient(135deg, rgba(17,17,17,0.7), rgba(255,107,0,0.15));
             z-index: 1;
         }
         
-        /* Glassmorphism */
         .glass-card {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             color: white;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            border-color: #ff6b00;
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.08);
         }
 
-        .btn-sport {
-            position: relative; overflow: hidden; transform: skewX(-10deg);
-            display: inline-block; transition: all 0.3s;
+        .clip-polygon { clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%); }
+        .clip-slant { clip-path: polygon(0 10%, 100% 0, 100% 90%, 0 100%); }
+        
+        .btn-primary {
+            position: relative; overflow: hidden;
+            display: inline-block; transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            z-index: 1;
         }
-        .btn-sport-inner { transform: skewX(10deg); display: block; }
-        .btn-sport::after {
+        .btn-primary::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: all 0.6s ease; z-index: -1;
+        }
+        .btn-primary:hover::before { left: 100%; }
+        .btn-primary:hover {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 10px 20px -10px rgba(255, 107, 0, 0.8), 0 0 20px rgba(255, 107, 0, 0.4);
+            border-color: #ff6b00;
+        }
+        
+        .mouse-glow {
+            position: fixed; width: 400px; height: 400px; background: radial-gradient(circle, rgba(255,107,0,0.15) 0%, transparent 70%);
+            border-radius: 50%; pointer-events: none; z-index: 50; mix-blend-mode: screen;
+            transform: translate(-50%, -50%); transition: top 0.1s, left 0.1s;
+        }
+        .btn-primary::after {
             content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
             background: rgba(255,255,255,0.2); transition: all 0.3s; transform: skewX(-20deg);
         }
-        .btn-sport:hover::after { left: 100%; }
-
-        /* Sports Ticker Marquee */
-        .marquee-wrapper {
-            background: #ff5a00; color: #0b132b; font-family: 'Bebas Neue', sans-serif;
-            overflow: hidden; white-space: nowrap; position: relative;
-            padding: 10px 0; border-top: 4px solid #fff; border-bottom: 4px solid #fff;
-            transform: skewY(-2deg); margin-top: -30px; z-index: 20;
-        }
-        .marquee-content {
-            display: inline-block; font-size: 2rem; letter-spacing: 2px;
-            animation: marquee 15s linear infinite;
-        }
-        @keyframes marquee {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
+        .btn-primary:hover::after { left: 100%; }
         
         /* Image Loop Gallery */
         .img-marquee-wrapper {
-            background: #0b132b; overflow: hidden; white-space: nowrap;
+            background: #1a1a1a; overflow: hidden; white-space: nowrap;
             position: relative; width: 100%; padding: 40px 0; z-index: 10;
         }
         .img-marquee-content {
             display: inline-block;
-            animation: img-marquee 30s linear infinite;
+            animation: img-marquee 40s linear infinite;
         }
         .img-marquee-content img {
-            display: inline-block; height: 300px; width: 400px; object-fit: cover;
-            margin: 0 15px; border: 4px solid #ff5a00; transform: skewX(-4deg);
-            border-radius: 8px; transition: transform 0.3s;
+            display: inline-block; height: 350px; width: 500px; object-fit: cover;
+            margin: 0 15px; border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 8px; transition: all 0.5s ease;
+            filter: grayscale(40%);
         }
-        .img-marquee-content img:hover { transform: skewX(0deg) scale(1.05); }
+        .img-marquee-content img:hover { transform: scale(1.05); filter: grayscale(0%); border-color: #ff6b00; }
         @keyframes img-marquee {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
         }
-    </style>
+    
+        /* --- Premium Animations --- */
+        @keyframes slowZoom {
+            0% { transform: scale(1.05); }
+            100% { transform: scale(1.25); }
+        }
+        .hero-video-zoom {
+            animation: slowZoom 25s ease-in-out infinite alternate;
+        }
+        
+        #particles-js {
+            position: absolute; width: 100%; height: 100%; top: 0; left: 0; z-index: 1; pointer-events: none;
+        }
+
+        @keyframes titleReveal {
+            0% { opacity: 0; transform: translateY(40px) scale(0.9); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        
+        .anim-title-word {
+            display: inline-block;
+            opacity: 0;
+            animation: titleReveal 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+        
+        @keyframes textGlow {
+            0% { text-shadow: 0 0 10px rgba(255, 107, 0, 0.2), 0 0 20px rgba(255, 107, 0, 0.1); }
+            50% { text-shadow: 0 0 20px rgba(255, 107, 0, 0.6), 0 0 40px rgba(255, 107, 0, 0.3); }
+            100% { text-shadow: 0 0 10px rgba(255, 107, 0, 0.2), 0 0 20px rgba(255, 107, 0, 0.1); }
+        }
+        
+        .anim-glow {
+            display: inline-block;
+            animation: textGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes fadeUpDelayed {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        
+        .anim-desc {
+            opacity: 0;
+            animation: fadeUpDelayed 1s cubic-bezier(0.2, 0.8, 0.2, 1) 1s forwards; /* 1s delay */
+        }
+        
+        @keyframes ambientLight {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .ambient-glow-bg {
+            position: absolute;
+            top: -10%; left: -10%; width: 120%; height: 120%;
+            background: radial-gradient(circle at center, rgba(255,107,0,0.15) 0%, transparent 60%);
+            z-index: 0;
+            pointer-events: none;
+            background-size: 200% 200%;
+            animation: ambientLight 10s ease infinite;
+        }
+        /* -------------------------- */
+</style>
 </head>
 <body>
 
     <!-- Navigation -->
-    <nav class="absolute w-full z-50 py-6">
+    <nav class="fixed w-full z-50 py-6 transition-all duration-300 bg-brand-dark/80 backdrop-blur-md border-b border-white/5" id="navbar">
         <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
-            <a href="index.html" class="text-4xl font-display text-white tracking-wider">TURF<span class="text-brand-orange">X</span></a>
-            <div class="hidden md:flex space-x-8 font-bold text-lg text-white font-display tracking-widest">
-                <a href="index.html" class="hover:text-brand-orange transition-colors">HOME</a>
-                <a href="locations.html" class="hover:text-brand-orange transition-colors">VENUES & 3D</a>
-                <a href="book.html" class="hover:text-brand-orange transition-colors">BOOK PITCH</a>
+            <a href="index.html" class="text-3xl font-display font-bold tracking-widest text-white">
+                5TH YARD <span class="text-brand-primary">TURF</span>
+            </a>
+            <div class="hidden md:flex space-x-8 font-bold text-sm tracking-widest">
+                <a href="index.html" class="hover:text-brand-primary transition-colors text-brand-primary uppercase">Home</a>
+                <a href="turf.html" class="hover:text-brand-primary transition-colors text-white uppercase">Turf Specs</a>
+                <a href="book.html" class="hover:text-brand-primary transition-colors text-white uppercase">Book Now</a>
             </div>
         </div>
     </nav>
 
     <!-- Hero Section -->
     <section class="hero-bg min-h-screen flex items-center clip-polygon relative pb-20">
-        <!-- YouTube Background -->
+        <!-- HTML5 Background Video -->
         <div class="video-wrapper">
-            <!-- Nike Football commercial reference -->
-            <iframe src="https://www.youtube.com/embed/3XviR7esUvo?autoplay=1&mute=1&loop=1&playlist=3XviR7esUvo&controls=0&showinfo=0&rel=0&modestbranding=1&disablekb=1" frameborder="0" allow="autoplay; encrypted-media"></iframe>
+            <video id="heroVideo" class="hero-video-zoom" autoplay muted playsinline style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;">
+                <source src="https://assets.mixkit.co/videos/preview/mixkit-playing-football-on-a-grass-field-41865-large.mp4" type="video/mp4">
+            </video>
         </div>
-        <div class="video-overlay"></div>
+        <div class="video-overlay"></div><div id="particles-js"></div>
         
         <div class="max-w-7xl mx-auto px-6 w-full relative z-10 pt-20">
-            <div class="max-w-3xl glass-card p-10 rounded-2xl transform skew-x-[-2deg]" data-aos="fade-right" data-aos-duration="1000">
-                <h1 class="text-7xl md:text-9xl font-display text-white mb-2 leading-none uppercase">
-                    Unleash Your <br><span class="text-brand-orange drop-shadow-[0_0_10px_rgba(255,90,0,0.8)]">Potential</span>
+            <div class="ambient-glow-bg"></div>
+            <div class="max-w-4xl glass-card p-12 rounded-2xl relative z-10" style="background: rgba(0,0,0,0.4); border-color: rgba(255,107,0,0.2); box-shadow: 0 0 40px rgba(0,0,0,0.8);">
+                <h1 class="text-6xl md:text-8xl font-display font-bold text-white mb-4 leading-none uppercase tracking-wide flex flex-col items-start">
+                    <span class="anim-title-word" style="animation-delay: 0.1s;">Claim Your</span>
+                    <span class="anim-title-word text-brand-primary" style="animation-delay: 0.3s; margin-top: 0.5rem;"><span class="anim-glow inline-block">Territory</span></span>
                 </h1>
-                <p class="text-xl md:text-2xl text-gray-300 mb-10 font-bold max-w-2xl border-l-4 border-brand-orange pl-4 uppercase italic">
-                    The Ultimate Football, Cricket & Badminton Experience. Premium 4G Turf. Indoor Courts. Pure Adrenaline.
+                <p class="text-xl md:text-2xl text-gray-300 mb-10 font-medium max-w-2xl border-l-4 border-brand-primary pl-4 uppercase anim-desc">
+                    The City's Premier Football & Cricket Arena. Premium 4G Turf. Pure Adrenaline.
                 </p>
-                <div class="flex gap-4">
-                    <a href="book.html" class="btn-sport bg-brand-orange text-white px-10 py-4 font-display text-2xl tracking-wider hover:bg-white hover:text-brand-orange shadow-xl shadow-brand-orange/30">
-                        <span class="btn-sport-inner">BOOK YOUR SLOT NOW</span>
-                    </a>
+                <div class="flex flex-wrap gap-4">
+                    <a href="book.html" class="btn-primary bg-brand-primary text-brand-dark font-display font-bold text-xl px-12 py-4 rounded-sm uppercase tracking-widest">Book Pitch Now</a>
+                    <a href="turf.html" class="btn-primary bg-transparent border-2 border-white text-white font-display font-bold text-xl px-12 py-4 rounded-sm uppercase tracking-widest hover:bg-white hover:text-brand-dark">View Specs</a>
+                </div>
+            </div>
+        </div>
+    
+        
+
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-24 relative z-0">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <div data-aos="fade-up">
+                <h4 class="text-brand-primary font-bold uppercase tracking-widest mb-2" data-aos="fade-up" data-aos-delay="100">Welcome to</h4>
+                <h2 class="text-5xl font-display font-bold mb-6 tracking-wide" data-aos="fade-up" data-aos-delay="200">5TH YARD <span class="text-brand-primary">TURF</span></h2>
+                <p class="text-gray-400 text-lg leading-relaxed mb-6" data-aos="fade-up" data-aos-delay="300">
+                    Founded by athletes for athletes, 5TH YARD TURF provides professional-grade facilities accessible to everyone. We noticed a lack of high-quality, well-maintained pitches in the city, so we built our own. 
+                </p>
+                <p class="text-gray-400 text-lg leading-relaxed mb-8" data-aos="fade-up" data-aos-delay="400">
+                    Whether you're organizing a highly competitive league match, a corporate tournament, or just a casual kickabout with friends, our state-of-the-art 4G arena guarantees the ultimate sporting experience.
+                </p>
+                <div class="flex justify-center items-center space-x-12 mt-8" data-aos="fade-up" data-aos-delay="500">
+                    <div>
+                        <p class="text-4xl font-display font-bold text-brand-primary">10K+</p>
+                        <p class="text-sm text-gray-500 uppercase tracking-widest font-bold mt-1">Matches Played</p>
+                    </div>
+                    <div>
+                        <p class="text-4xl font-display font-bold text-brand-primary">100%</p>
+                        <p class="text-sm text-gray-500 uppercase tracking-widest font-bold mt-1">Pro Surface</p>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Marquee Animation -->
-    <div class="marquee-wrapper shadow-2xl">
-        <div class="marquee-content">
-            ⚡ EAT. SLEEP. FOOTBALL. CRICKET. BADMINTON. REPEAT. ⚡ BOOK YOUR COURT ⚡ DOMINATE THE GAME ⚡ EAT. SLEEP. FOOTBALL. CRICKET. BADMINTON. REPEAT. ⚡ BOOK YOUR COURT ⚡ DOMINATE THE GAME ⚡
-        </div>
-    </div>
-
-    <!-- Features -->
-    <section class="py-24 bg-brand-navy relative -mt-20 z-0">
+    <!-- Why Choose Us / Features -->
+    <section class="py-24 bg-black/50 border-y border-white/5 relative z-0">
         <div class="max-w-7xl mx-auto px-6">
-            <div class="text-center mb-16" data-aos="zoom-in" data-aos-duration="1000">
-                <h2 class="text-5xl font-display text-white">PLAY LIKE A <span class="text-brand-orange">CHAMPION</span></h2>
-                <div class="w-24 h-2 bg-brand-orange mx-auto mt-4 transform -skew-x-12"></div>
+            <div class="text-center mb-16" data-aos="fade-up">
+                <h2 class="text-5xl font-display font-bold text-white uppercase tracking-wider">Play Like a <span class="text-brand-primary">Pro</span></h2>
+                <div class="w-24 h-1 bg-brand-primary mx-auto mt-6"></div>
             </div>
             
             <div class="grid md:grid-cols-3 gap-8">
-                <div data-tilt data-tilt-max="10" data-tilt-speed="400" data-tilt-glare="true" data-tilt-max-glare="0.5" class="glass-card p-8 transform transition hover:-translate-y-2 border-b-4 border-transparent hover:border-brand-orange rounded-xl" data-aos="flip-left" data-aos-delay="0">
-                    <h3 class="text-3xl font-display text-brand-orange mb-4">FIFA Quality Turf</h3>
-                    <p class="text-gray-300 font-medium text-lg">State-of-the-art synthetic grass engineered for perfect ball roll and maximum joint protection during intense sprints.</p>
+                <div class="glass-card p-8 rounded-xl text-center" data-aos="fade-up" data-aos-delay="0">
+                    <div class="w-16 h-16 bg-brand-primary/20 rounded-full flex items-center justify-center mx-auto mb-6 text-brand-primary border border-brand-primary/50">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-display font-bold text-white mb-4 uppercase tracking-wider">FIFA Quality Turf</h3>
+                    <p class="text-gray-400 font-medium leading-relaxed">State-of-the-art 4G synthetic grass engineered for perfect ball roll and maximum joint protection.</p>
                 </div>
-                <div data-tilt data-tilt-max="10" data-tilt-speed="400" data-tilt-glare="true" data-tilt-max-glare="0.5" class="glass-card p-8 transform transition hover:-translate-y-2 border-b-4 border-transparent hover:border-brand-orange rounded-xl" data-aos="flip-up" data-aos-delay="100">
-                    <h3 class="text-3xl font-display text-brand-orange mb-4">Stadium Lighting</h3>
-                    <p class="text-gray-300 font-medium text-lg">500-lux anti-glare LED floodlights that turn night into day, ensuring you never lose sight of the ball.</p>
+                <div class="glass-card p-8 rounded-xl text-center" data-aos="fade-up" data-aos-delay="100">
+                    <div class="w-16 h-16 bg-brand-primary/20 rounded-full flex items-center justify-center mx-auto mb-6 text-brand-primary border border-brand-primary/50">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-display font-bold text-white mb-4 uppercase tracking-wider">Stadium Lighting</h3>
+                    <p class="text-gray-400 font-medium leading-relaxed">500-lux anti-glare LED floodlights that turn night into day, ensuring you never lose sight of the ball.</p>
                 </div>
-                <div data-tilt data-tilt-max="10" data-tilt-speed="400" data-tilt-glare="true" data-tilt-max-glare="0.5" class="glass-card p-8 transform transition hover:-translate-y-2 border-b-4 border-transparent hover:border-brand-orange rounded-xl" data-aos="flip-right" data-aos-delay="200">
-                    <h3 class="text-3xl font-display text-brand-orange mb-4">Instant Booking</h3>
-                    <p class="text-gray-300 font-medium text-lg">Secure your slot instantly through our custom online system. No hassle, just show up and play.</p>
+                <div class="glass-card p-8 rounded-xl text-center" data-aos="fade-up" data-aos-delay="200">
+                    <div class="w-16 h-16 bg-brand-primary/20 rounded-full flex items-center justify-center mx-auto mb-6 text-brand-primary border border-brand-primary/50">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-display font-bold text-white mb-4 uppercase tracking-wider">Instant Booking</h3>
+                    <p class="text-gray-400 font-medium leading-relaxed">Secure your slot instantly through our custom online movie-style booking system. No hassle.</p>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <!-- Pricing & How it Works -->
+    <section class="py-24 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16">
+            
+            <!-- Pricing -->
+            <div data-aos="fade-right" data-aos-duration="1000">
+                <h3 class="text-4xl font-display font-bold uppercase tracking-wider mb-8">Transparent <span class="text-brand-primary">Pricing</span></h3>
+                <div class="glass-card p-8 border-l-4 border-l-brand-primary rounded-r-xl relative overflow-hidden transition-transform duration-500 hover:scale-[1.02]">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 pointer-events-none transform rotate-12">
+                        <svg class="w-32 h-32" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+                    </div>
+                    <h4 class="text-2xl font-bold mb-2">Base Rate</h4>
+                    <p class="text-5xl font-display font-bold text-brand-primary mb-6" data-aos="zoom-in" data-aos-delay="200">₹1,100 <span class="text-lg text-gray-400 font-sans font-normal uppercase">/ 1 Hour</span></p>
+                    
+                    <h4 class="text-xl font-bold mb-2 mt-8">Need more time?</h4>
+                    <p class="text-gray-300 mb-6">Extend your game proportionally. No hidden fees.</p>
+                    <ul class="space-y-3 text-gray-400 font-medium">
+                        <li class="flex justify-between border-b border-white/10 pb-2" data-aos="fade-up" data-aos-delay="300"><span>+ 30 Minutes</span> <span class="text-white">₹550</span></li>
+                        <li class="flex justify-between border-b border-white/10 pb-2" data-aos="fade-up" data-aos-delay="400"><span>1.5 Hours</span> <span class="text-white">₹1,650</span></li>
+                        <li class="flex justify-between pb-2" data-aos="fade-up" data-aos-delay="500"><span>2 Hours</span> <span class="text-white">₹2,200</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- How it works -->
+            <div>
+                <h3 class="text-4xl font-display font-bold uppercase tracking-wider mb-8" data-aos="fade-left">How to <span class="text-brand-primary">Book</span></h3>
+                <div class="space-y-8">
+                    <div class="flex items-start group" data-aos="fade-left" data-aos-delay="100">
+                        <div class="w-12 h-12 bg-brand-primary text-brand-dark rounded-full flex items-center justify-center font-display font-bold text-2xl flex-shrink-0 mt-1 transition-transform group-hover:scale-110 group-hover:rotate-12">1</div>
+                        <div class="ml-6">
+                            <h4 class="text-2xl font-bold mb-2 group-hover:text-brand-primary transition-colors">Select Your Date & Time</h4>
+                            <p class="text-gray-400">Browse our dynamic 30-day calendar and pick an available 1-hour slot. Live availability ensures no double bookings.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start group" data-aos="fade-left" data-aos-delay="250">
+                        <div class="w-12 h-12 bg-brand-primary text-brand-dark rounded-full flex items-center justify-center font-display font-bold text-2xl flex-shrink-0 mt-1 transition-transform group-hover:scale-110 group-hover:rotate-12">2</div>
+                        <div class="ml-6">
+                            <h4 class="text-2xl font-bold mb-2 group-hover:text-brand-primary transition-colors">Choose Duration</h4>
+                            <p class="text-gray-400">Stick with the standard 1 hour, or toggle the +30 min extension if you need that extra time to settle the score.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start group" data-aos="fade-left" data-aos-delay="400">
+                        <div class="w-12 h-12 bg-brand-primary text-brand-dark rounded-full flex items-center justify-center font-display font-bold text-2xl flex-shrink-0 mt-1 transition-transform group-hover:scale-110 group-hover:rotate-12">3</div>
+                        <div class="ml-6">
+                            <h4 class="text-2xl font-bold mb-2 group-hover:text-brand-primary transition-colors">Confirm & Play</h4>
+                            <p class="text-gray-400">Enter your details and secure your booking instantly. Just show up with your team and dominate the pitch.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </section>
 
     <!-- Image Looping Gallery -->
-    <section class="img-marquee-wrapper border-y-8 border-brand-orange">
+    <section class="img-marquee-wrapper border-y border-brand-primary/20">
         <div class="img-marquee-content">
             <img src="https://upload.wikimedia.org/wikipedia/commons/0/02/Panorama_of_Anfield_with_new_main_stand_%2829676137824%29.jpg" alt="Anfield">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/f/fd/Olympics_2012_Mixed_Doubles_Final.jpg" alt="Badminton">
             <img src="https://upload.wikimedia.org/wikipedia/commons/a/ad/Camp_Nou_aerial.jpg" alt="Camp Nou">
             <img src="https://upload.wikimedia.org/wikipedia/commons/1/1f/Church_Times_Cricket_Cup_final_2019%2C_Wicket_3.jpg" alt="Cricket Pitch">
             <img src="https://upload.wikimedia.org/wikipedia/commons/6/68/Wembley_Stadium%2C_illuminated.jpg" alt="Wembley">
@@ -190,7 +341,6 @@
             <img src="https://upload.wikimedia.org/wikipedia/commons/4/49/Sydney_Cricket_Ground_%2824509044622%29.jpg" alt="Sydney Cricket Ground">
             <!-- Duplicate for infinite effect -->
             <img src="https://upload.wikimedia.org/wikipedia/commons/0/02/Panorama_of_Anfield_with_new_main_stand_%2829676137824%29.jpg" alt="Anfield">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/f/fd/Olympics_2012_Mixed_Doubles_Final.jpg" alt="Badminton">
             <img src="https://upload.wikimedia.org/wikipedia/commons/a/ad/Camp_Nou_aerial.jpg" alt="Camp Nou">
             <img src="https://upload.wikimedia.org/wikipedia/commons/1/1f/Church_Times_Cricket_Cup_final_2019%2C_Wicket_3.jpg" alt="Cricket Pitch">
             <img src="https://upload.wikimedia.org/wikipedia/commons/6/68/Wembley_Stadium%2C_illuminated.jpg" alt="Wembley">
@@ -200,33 +350,131 @@
         </div>
     </section>
 
-    <!-- Footer / Store Description -->
-    <footer class="bg-brand-navy text-white pt-20 pb-10">
-        <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 mb-12">
-            <div data-aos="fade-right" data-aos-duration="1000">
-                <a href="index.html" class="text-5xl font-display tracking-wider mb-6 inline-block">TURF<span class="text-brand-orange">X</span></a>
-                <p class="text-gray-400 text-lg leading-relaxed font-medium max-w-lg">
-                    TurfX Arena is the city's premier sports destination. Founded by athletes for athletes, we provide professional-grade football facilities accessible to everyone. Whether you're organizing a competitive league match or a casual kickabout with friends, our state-of-the-art 4G pitches guarantee the ultimate sporting experience. Eat. Sleep. Play. Repeat.
+    <!-- Footer -->
+    <footer class="bg-black pt-20 pb-10">
+        <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-12 mb-12">
+            <div data-aos="fade-right">
+                <a href="index.html" class="text-4xl font-display font-bold tracking-widest text-white mb-6 inline-block">5TH YARD <span class="text-brand-primary">TURF</span></a>
+                <p class="text-gray-400 leading-relaxed text-sm">
+                    The premium multi-purpose turf arena built for those who take the game seriously. Eat. Sleep. Play. Repeat.
                 </p>
             </div>
-            <div class="md:text-right" data-aos="fade-left" data-aos-duration="1000">
-                <h4 class="text-3xl font-display mb-4">CONTACT US</h4>
-                <p class="text-brand-orange font-bold text-xl mb-2 hover:scale-110 transition-transform origin-right">📞 +91 98765 43210</p>
-                <p class="text-gray-400 font-medium mb-6">📍 123 Sports Avenue, Downtown</p>
-                <a href="book.html" class="btn-sport bg-white text-brand-navy px-8 py-3 font-display text-xl hover:bg-brand-orange hover:text-white inline-block shadow-lg">
-                    <span class="btn-sport-inner">RESERVE A PITCH</span>
-                </a>
+            <div data-aos="fade-up">
+                <h4 class="text-white font-bold uppercase tracking-widest mb-6">Quick Links</h4>
+                <ul class="space-y-3 text-gray-400 text-sm font-medium">
+                    <li><a href="index.html" class="hover:text-brand-primary transition">Home</a></li>
+                    <li><a href="turf.html" class="hover:text-brand-primary transition">Turf Specifications</a></li>
+                    <li><a href="book.html" class="hover:text-brand-primary transition">Book Your Slot</a></li>
+                </ul>
+            </div>
+            <div data-aos="fade-left">
+                <h4 class="text-white font-bold uppercase tracking-widest mb-6">Contact Us</h4>
+                <ul class="space-y-3 text-gray-400 text-sm font-medium">
+                    <li>📍 123 Sports Avenue, City Center</li>
+                    <li>📞 +91 98765 43210</li>
+                    <li>✉️ play@5thyardturf.com</li>
+                </ul>
             </div>
         </div>
-        <div class="text-center text-gray-500 font-medium pt-8 border-t border-gray-800" data-aos="fade-up">
-            &copy; 2026 TurfX Arena. All rights reserved.
+        <div class="max-w-7xl mx-auto px-6 text-center border-t border-white/10 pt-8 text-gray-600 text-sm">
+            © 2026 5TH YARD TURF. All rights reserved. Built for champions.
         </div>
     </footer>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.2/vanilla-tilt.min.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script>
-        AOS.init({ once: true, offset: 50 });
+        particlesJS("particles-js", {
+            particles: {
+                number: { value: 60, density: { enable: true, value_area: 800 } },
+                color: { value: "#ff6b00" },
+                shape: { type: "circle" },
+                opacity: { value: 0.5, random: true },
+                size: { value: 3, random: true },
+                line_linked: { enable: false },
+                move: { enable: true, speed: 1, direction: "top", random: true, straight: false, out_mode: "out", bounce: false }
+            },
+            interactivity: {
+                detect_on: "canvas",
+                events: { onhover: { enable: true, mode: "bubble" }, onclick: { enable: false }, resize: true },
+                modes: { bubble: { distance: 200, size: 6, duration: 2, opacity: 1, speed: 3 } }
+            },
+            retina_detect: true
+        });
     </script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ 
+            duration: 1000, 
+            once: true,
+            easing: 'ease-out-cubic',
+            offset: 100
+        });
+
+        // Background Video Playlist (Mixed Football and Cricket simulation)
+        const videoPlaylist = [
+            "https://assets.mixkit.co/videos/preview/mixkit-playing-football-on-a-grass-field-41865-large.mp4",
+            "https://videos.pexels.com/video-files/6104273/6104273-uhd_2732_1440_25fps.mp4", // Alternative sports/cricket-like field
+            "https://assets.mixkit.co/videos/preview/mixkit-young-man-playing-soccer-in-a-field-41887-large.mp4"
+        ];
+        let currentVid = 0;
+        const heroVideo = document.getElementById('heroVideo');
+        
+        if(heroVideo) {
+            heroVideo.addEventListener('ended', playNextVideo);
+            heroVideo.addEventListener('error', playNextVideo); // Skip if video 404s
+        }
+
+        function playNextVideo() {
+            currentVid = (currentVid + 1) % videoPlaylist.length;
+            heroVideo.src = videoPlaylist[currentVid];
+            heroVideo.play().catch(e => console.log("Video autoplay prevented or URL failed", e));
+        }
+
+        // Navbar Scroll & Parallax Effect
+        window.addEventListener('scroll', () => {
+            const scrolled = window.scrollY;
+            const nav = document.getElementById('navbar');
+            const heroVid = document.getElementById('heroVideo');
+            
+            // Navbar color transition
+            if (scrolled > 50) {
+                nav.classList.add('bg-brand-dark', 'shadow-lg');
+                nav.classList.remove('bg-brand-dark/80');
+            } else {
+                nav.classList.add('bg-brand-dark/80');
+                nav.classList.remove('bg-brand-dark', 'shadow-lg');
+            }
+
+            // Parallax effect for hero video
+            if (heroVid && scrolled < window.innerHeight) {
+                heroVid.style.transform = `scale(1.1) translateY(${scrolled * 0.3}px)`;
+            }
+        });
+    </script>
+
+    <div id="mouseGlow" class="mouse-glow" style="top: -1000px; left: -1000px;"></div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const glow = document.getElementById('mouseGlow');
+            const heroWrapper = document.querySelector('.video-wrapper');
+            
+            document.addEventListener('mousemove', (e) => {
+                // Update glow position
+                if(glow) {
+                    glow.style.left = e.clientX + 'px';
+                    glow.style.top = e.clientY + 'px';
+                }
+                
+                // Subtle parallax for background based on mouse
+                if(heroWrapper && window.scrollY < window.innerHeight) {
+                    const x = (window.innerWidth / 2 - e.clientX) / 80;
+                    const y = (window.innerHeight / 2 - e.clientY) / 80;
+                    heroWrapper.style.transform = `translate(${x}px, ${y}px)`;
+                }
+            });
+        });
+    </script>
+
 </body>
 </html>

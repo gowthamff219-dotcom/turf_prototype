@@ -3,396 +3,779 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TurfX | Book Your Slot</title>
+    <title>5TH YARD TURF | Book Your Slot</title>
+    <!-- Firebase SDK (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+    
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Roboto', 'sans-serif'], display: ['Bebas Neue', 'sans-serif'] },
-                    colors: { brand: { orange: '#ff5a00', navy: '#0b132b', blue: '#1c2541' } }
+                    fontFamily: { sans: ['Montserrat', 'sans-serif'], display: ['Oswald', 'sans-serif'] },
+                    colors: { brand: { primary: '#ff6b00', dark: '#111111', gray: '#2d3748', white: '#ffffff' } }
                 }
             }
         }
     </script>
     <style>
-        body { background-color: #f8f9fa; color: #0b132b; }
-        .nav-link { position: relative; transition: color 0.3s; }
-        .nav-link:hover { color: #ff5a00; }
+        body { font-family: 'Montserrat', sans-serif; background-color: #111111; color: #ffffff; overflow-x: hidden; }
+        .glass-panel { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; }
         
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5rem; }
-        .day-header { text-align: center; font-size: 0.8rem; color: #6b7280; font-weight: 700; padding-bottom: 0.5rem; }
-        .day-cell {
-            aspect-ratio: 1; display: flex; justify-content: center; align-items: center;
-            cursor: pointer; transition: all 0.2s; font-weight: 700; background: white; border: 2px solid #e5e7eb;
-            transform: skewX(-5deg);
+        .date-card { transition: all 0.2s; cursor: pointer; }
+        .date-card.selected { background-color: #ff6b00; color: #111111; border-color: #ff6b00; transform: scale(1.05); }
+        .date-card:hover:not(.selected) { border-color: #ff6b00; }
+
+        .time-slot { transition: all 0.2s; cursor: pointer; }
+        .time-slot.available:hover { border-color: #ff6b00; background-color: rgba(255,107,0,0.1); }
+        .time-slot.selected { background-color: #ff6b00; color: #111111; border-color: #ff6b00; transform: scale(1.05); }
+        .time-slot.booked { background-color: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); color: #666; cursor: not-allowed; text-decoration: line-through; }
+        .time-slot.past { background-color: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); color: #444; cursor: not-allowed; }
+
+        /* Toggle Switch */
+        .toggle-checkbox:checked { right: 0; border-color: #ff6b00; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #ff6b00; }
+        
+        .loader { border-top-color: #ff6b00; -webkit-animation: spinner 1.5s linear infinite; animation: spinner 1.5s linear infinite; }
+        @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Toast */
+        #toast { position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); transition: bottom 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 1000; }
+        #toast.show { bottom: 30px; }
+
+        .sport-btn { transition: all 0.3s; }
+        .sport-btn.selected { background-color: #ff6b00; color: #111111; border-color: #ff6b00; }
+    
+        /* --- Premium Animations --- */
+        .btn-primary {
+            position: relative; overflow: hidden;
+            display: inline-block; transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            z-index: 1;
         }
-        .day-cell span { transform: skewX(5deg); }
-        .day-cell:hover:not(.disabled) { border-color: #ff5a00; color: #ff5a00; }
-        .day-cell.selected { background: #ff5a00; color: white; border-color: #ff5a00; }
-        .day-cell.disabled { background: #f3f4f6; color: #9ca3af; cursor: not-allowed; border-color: transparent; }
+        .btn-primary::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: all 0.6s ease; z-index: -1;
+        }
+        .btn-primary:hover::before { left: 100%; }
+        .btn-primary:hover {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 10px 20px -10px rgba(255, 107, 0, 0.8), 0 0 20px rgba(255, 107, 0, 0.4);
+            border-color: #ff6b00;
+        }
         
-        .slot-card { transform: skewX(-5deg); transition: transform 0.2s; }
-        .slot-card-inner { transform: skewX(5deg); }
-        .slot-card:hover:not(.opacity-50) { transform: skewX(-5deg) translateY(-5px); border-color: #ff5a00; }
-    </style>
+        .mouse-glow {
+            position: fixed; width: 400px; height: 400px; background: radial-gradient(circle, rgba(255,107,0,0.15) 0%, transparent 70%);
+            border-radius: 50%; pointer-events: none; z-index: 50; mix-blend-mode: screen;
+            transform: translate(-50%, -50%); transition: top 0.1s, left 0.1s;
+        }
+
+        @keyframes titleReveal {
+            0% { opacity: 0; transform: translateY(40px) scale(0.9); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        
+        .anim-title-word {
+            display: inline-block;
+            opacity: 0;
+            animation: titleReveal 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+        
+        @keyframes textGlow {
+            0% { text-shadow: 0 0 10px rgba(255, 107, 0, 0.2), 0 0 20px rgba(255, 107, 0, 0.1); }
+            50% { text-shadow: 0 0 20px rgba(255, 107, 0, 0.6), 0 0 40px rgba(255, 107, 0, 0.3); }
+            100% { text-shadow: 0 0 10px rgba(255, 107, 0, 0.2), 0 0 20px rgba(255, 107, 0, 0.1); }
+        }
+        
+        .anim-glow {
+            display: inline-block;
+            animation: textGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes fadeUpDelayed {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        
+        .anim-desc {
+            opacity: 0;
+            animation: fadeUpDelayed 1s cubic-bezier(0.2, 0.8, 0.2, 1) 0.5s forwards;
+        }
+        /* -------------------------- */
+
+</style>
 </head>
-<body class="min-h-screen flex flex-col font-sans">
+<body class="min-h-screen flex flex-col">
 
     <!-- Navigation -->
-    <nav class="w-full bg-brand-navy py-6 shadow-xl relative z-20">
+    <nav class="fixed w-full z-50 py-4 bg-brand-dark/95 backdrop-blur-md border-b border-white/10" id="navbar">
         <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
-            <a href="index.html" class="text-4xl font-display text-white tracking-wider">TURF<span class="text-brand-orange">X</span></a>
-            <div class="hidden md:flex space-x-8 font-bold text-lg text-white font-display tracking-widest items-center">
-                <a href="index.html" class="nav-link">HOME</a>
-                <a href="locations.html" class="nav-link">VENUES & 3D</a>
-                <a href="book.html" class="text-brand-orange">BOOK PITCH</a>
-                <button onclick="openManageModal()" class="border-2 border-brand-orange text-brand-orange px-4 py-1 hover:bg-brand-orange hover:text-white transition-colors transform skew-x-[-10deg]">MANAGE BOOKINGS</button>
+            <a href="index.html" class="text-3xl font-display font-bold tracking-widest text-white">
+                5TH YARD <span class="text-brand-primary">TURF</span>
+            </a>
+            <div class="hidden md:flex space-x-8 font-bold text-sm tracking-widest">
+                <a href="index.html" class="hover:text-brand-primary transition-colors text-white uppercase">Home</a>
+                <a href="turf.html" class="hover:text-brand-primary transition-colors text-white uppercase">Turf Specs</a>
+                <a href="book.html" class="text-brand-primary transition-colors uppercase">Book Now</a>
             </div>
         </div>
     </nav>
 
-    <main class="flex-grow max-w-7xl mx-auto w-full px-6 py-12 flex flex-col lg:flex-row gap-12">
-        <!-- Left: Calendar & Location -->
-        <div class="lg:w-1/3">
-            <h2 class="text-5xl font-display text-brand-navy mb-8">SELECT <span class="text-brand-orange">VENUE</span></h2>
+    <!-- Main Booking App -->
+    <main class="flex-grow pt-24 pb-20">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6">
             
-            <div class="mb-4">
-                <label class="block text-sm font-bold text-gray-500 mb-2 uppercase">Location</label>
-                <select id="locationSelect" class="w-full bg-white border-4 border-brand-navy text-brand-navy font-bold text-lg p-4 outline-none focus:border-brand-orange cursor-pointer transform skew-x-[-2deg]">
-                    <option value="downtown">Downtown Arena (₹2000/hr)</option>
-                    <option value="northside">Northside Pitch (₹1500/hr)</option>
-                    <option value="eastside">Eastside Complex (₹1200/hr)</option>
-                    <option value="westend">Westend Park (₹1800/hr)</option>
-                    <option value="central">Central Stadium (₹2500/hr)</option>
-                </select>
-            </div>
-            
-            <div class="mb-8">
-                <label class="block text-sm font-bold text-gray-500 mb-2 uppercase">Turf / Court</label>
-                <select id="turfSelect" class="w-full bg-white border-4 border-brand-navy text-brand-navy font-bold text-lg p-4 outline-none focus:border-brand-orange cursor-pointer transform skew-x-[-2deg]">
-                    <option value="multipurpose">Football / Cricket Turf (Multi-purpose)</option>
-                    <option value="badminton_1">Badminton Court 1 (Indoor)</option>
-                    <option value="badminton_2">Badminton Court 2 (Indoor)</option>
-                </select>
+            <div class="text-center mb-10" data-aos="fade-down">
+                <h1 class="text-4xl md:text-5xl font-display font-bold uppercase tracking-wider mb-2">Book Your <span class="text-brand-primary">Slot</span></h1>
+                <p class="text-gray-400">1 Turf. Endless Possibilities. Lock it in.</p>
+                <button onclick="openManageModal()" class="mt-4 text-brand-primary hover:text-white underline text-sm font-bold uppercase tracking-widest transition-colors">Manage My Bookings</button>
             </div>
 
-            <div class="bg-white border-4 border-gray-200 p-6 shadow-xl relative">
-                <div class="absolute top-0 left-0 w-full h-1 bg-brand-orange"></div>
-                <div class="flex justify-between items-center mb-6">
-                    <button id="prevMonth" class="text-brand-navy hover:text-brand-orange font-bold text-xl">&larr;</button>
-                    <h3 id="monthYear" class="font-bold text-xl uppercase tracking-wider text-brand-navy"></h3>
-                    <button id="nextMonth" class="text-brand-navy hover:text-brand-orange font-bold text-xl">&rarr;</button>
-                </div>
+            <div class="glass-panel p-6 md:p-10 relative overflow-hidden" data-aos="fade-up">
                 
-                <div class="calendar-grid mb-2">
-                    <div class="day-header">SUN</div><div class="day-header">MON</div><div class="day-header">TUE</div>
-                    <div class="day-header">WED</div><div class="day-header">THU</div><div class="day-header">FRI</div><div class="day-header">SAT</div>
+                <!-- Step 1: Date Grid -->
+                <div class="mb-10" id="stepDate">
+                    <h3 class="text-xl font-bold uppercase tracking-widest mb-4 flex items-center">
+                        <span class="w-8 h-8 rounded-full bg-brand-primary text-brand-dark flex items-center justify-center mr-3 font-display">1</span> 
+                        Select Date
+                    </h3>
+                    <div class="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-7 gap-3" id="calendarGrid">
+                        <!-- Dates injected via JS -->
+                    </div>
                 </div>
-                <div id="calendarDays" class="calendar-grid"></div>
-            </div>
-        </div>
 
-        <!-- Right: Slots -->
-        <div class="lg:w-2/3">
-            <h2 class="text-5xl font-display text-brand-navy mb-8">AVAILABLE <span class="text-brand-orange">SLOTS</span></h2>
-            
-            <div id="loadingSlots" class="hidden text-center py-12 text-brand-orange text-3xl animate-pulse font-display">
-                SYNCING DATA...
-            </div>
+                <!-- Step 2: Time Slots -->
+                <div class="mb-10 hidden" id="stepTime">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-4 gap-4">
+                        <h3 class="text-xl font-bold uppercase tracking-widest flex items-center">
+                            <span class="w-8 h-8 rounded-full bg-brand-primary text-brand-dark flex items-center justify-center mr-3 font-display">2</span> 
+                            Select 1-Hour Slot
+                        </h3>
+                        <div class="flex items-center space-x-4 text-xs font-bold uppercase tracking-widest">
+                            <span class="flex items-center"><div class="w-3 h-3 bg-brand-primary mr-2"></div>Selected</span>
+                            <span class="flex items-center"><div class="w-3 h-3 bg-white/10 mr-2"></div>Booked</span>
+                            <span class="flex items-center"><div class="w-3 h-3 border border-white/30 mr-2"></div>Available</span>
+                        </div>
+                    </div>
+                    
+                    <div id="slotsLoader" class="hidden justify-center py-10">
+                        <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
+                    </div>
+                    
+                    <div id="slotsContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                        <!-- Slots injected via JS -->
+                    </div>
+                </div>
 
-            <div id="slotsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="col-span-full text-center py-12 text-gray-500 font-bold">Please select a date from the calendar.</div>
+                
+                <!-- Step 3: Payment Details -->
+                <div id="stepPayment" class="hidden mt-12 pt-10 border-t border-white/10 animate-fade-in">
+                    <h3 class="text-xl font-bold uppercase tracking-widest mb-6 flex items-center">
+                        <span class="w-8 h-8 rounded-full bg-brand-primary text-brand-dark flex items-center justify-center mr-3 font-display">3</span> 
+                        Confirm & Pay
+                    </h3>
+                    
+                    <div class="bg-black/50 border border-white/5 rounded-xl p-6 sm:p-8">
+                        <p class="font-bold text-gray-500 text-sm mb-1">
+                            5TH YARD TURF (<span id="modalRateText">₹1100</span>/hr) - Football / Cricket Turf
+                        </p>
+                        <p class="font-bold text-gray-300 mb-6">
+                            <span id="modalDate"></span> @ <span id="modalTime"></span>
+                        </p>
+
+                        <div class="grid sm:grid-cols-2 gap-6 mb-6">
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Player Name</label>
+                                <input type="text" id="custName" class="w-full bg-white/5 border border-white/10 rounded-sm px-4 py-3 text-white focus:outline-none focus:border-brand-primary font-bold" placeholder="">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Phone Number</label>
+                                <input type="tel" id="authPhone" class="w-full bg-white/5 border border-white/10 rounded-sm px-4 py-3 text-white focus:outline-none focus:border-brand-primary font-bold" placeholder="">
+                            </div>
+                        </div>
+
+                        <!-- Extension Checkboxes -->
+                        <div class="mb-6">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Extend Booking</label>
+                            
+                            <div class="flex items-center space-x-3 bg-white/5 p-4 border border-white/10 rounded-sm cursor-pointer mb-2" onclick="toggleDuration(0.5)">
+                                <input type="checkbox" id="chk30" class="w-5 h-5 text-brand-primary border-gray-600 rounded bg-transparent focus:ring-brand-primary pointer-events-none">
+                                <div class="flex-1">
+                                    <p class="font-bold text-sm text-gray-200 uppercase tracking-wide">Add 30 Mins Extra (+₹<span id="optExtra1">550</span>)</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center space-x-3 bg-white/5 p-4 border border-white/10 rounded-sm cursor-pointer mb-2" onclick="toggleDuration(1.0)">
+                                <input type="checkbox" id="chk60" class="w-5 h-5 text-brand-primary border-gray-600 rounded bg-transparent focus:ring-brand-primary pointer-events-none">
+                                <div class="flex-1">
+                                    <p class="font-bold text-sm text-gray-200 uppercase tracking-wide">Add 1 Hour Extra (+₹<span id="optExtra2">1100</span>)</p>
+                                </div>
+                            </div>
+
+                            <p id="durationError" class="text-red-500 text-xs font-bold hidden mt-2">The selected extended time is not available.</p>
+                        </div>
+
+                        <div class="mt-6 mb-8">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Payment Method</label>
+                            <select id="payMethod" class="w-full sm:w-1/2 bg-white/5 border border-white/10 rounded-sm px-4 py-3 text-white font-bold focus:outline-none focus:border-brand-primary appearance-none">
+                                <option value="UPI" class="text-black">UPI (GPay, PhonePe, Paytm)</option>
+                                <option value="Card" class="text-black">Credit / Debit Card</option>
+                            </select>
+                        </div>
+
+                        <!-- Price Box -->
+                        <div class="bg-brand-primary/10 border border-brand-primary/30 p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center rounded-sm mb-6">
+                            <div class="mb-2 sm:mb-0">
+                                <span class="block text-xs font-bold uppercase tracking-wider text-brand-primary">Advance to Pay Now</span>
+                                <span class="block text-[11px] font-bold uppercase text-gray-400 mt-1" id="modalBalanceText">Balance ₹600 at Venue</span>
+                            </div>
+                            <span class="text-4xl font-display font-bold text-brand-primary">₹500</span>
+                        </div>
+
+                        <div class="flex space-x-4">
+                            <button id="confirmBtn" onclick="submitBooking()" class="flex-1 bg-brand-primary text-brand-dark font-display font-bold text-xl py-4 rounded-sm uppercase tracking-widest hover:bg-white transition-colors">
+                                Pay & Book Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+
             </div>
         </div>
     </main>
 
-    <!-- Booking Modal -->
-    <div id="bookingModal" class="hidden fixed inset-0 bg-brand-navy bg-opacity-95 z-50 flex items-center justify-center p-4">
-        <div class="bg-white border-t-8 border-brand-orange p-8 max-w-md w-full shadow-2xl relative">
-            <h3 class="text-4xl font-display text-brand-navy mb-1">CONFIRM <span class="text-brand-orange">BOOKING</span></h3>
-            <p class="text-gray-500 mb-6 font-bold"><span id="modalLoc"></span> - <span id="modalTurf"></span><br><span id="modalDateStr"></span> @ <span id="modalTime" class="text-brand-navy"></span></p>
-            
-            <div class="space-y-4 mb-6">
-                <div>
-                    <label class="block text-sm font-bold text-gray-700 uppercase mb-1">Player Name</label>
-                    <input type="text" id="custName" class="w-full bg-gray-100 border-2 border-gray-300 p-3 text-brand-navy font-bold focus:border-brand-orange outline-none transform skew-x-[-2deg]">
-                </div>
-                <div>
-                    <label class="block text-sm font-bold text-gray-700 uppercase mb-1">Phone Number (Required for cancellation)</label>
-                    <input type="tel" id="custPhone" class="w-full bg-gray-100 border-2 border-gray-300 p-3 text-brand-navy font-bold focus:border-brand-orange outline-none transform skew-x-[-2deg]">
-                </div>
-                <div>
-                    <label class="block text-sm font-bold text-gray-700 uppercase mb-1">Payment Method</label>
-                    <select id="paymentMethod" class="w-full bg-gray-100 border-2 border-gray-300 p-3 text-brand-navy font-bold focus:border-brand-orange outline-none transform skew-x-[-2deg]">
-                        <option value="upi">UPI (GPay, PhonePe, Paytm)</option>
-                        <option value="card">Credit / Debit Card</option>
-                        <option value="cash">Cash at Venue</option>
-                    </select>
-                </div>
-                <div class="flex justify-between items-center bg-gray-100 p-4 border-2 border-gray-300 transform skew-x-[-2deg]">
-                    <span class="text-gray-600 font-bold uppercase">Total Price</span>
-                    <span id="modalPrice" class="text-3xl font-display text-brand-orange"></span>
-                </div>
-            </div>
-
-            <div class="flex gap-4">
-                <button onclick="closeModal('bookingModal')" class="flex-1 bg-gray-200 text-brand-navy font-display text-2xl py-3 transform skew-x-[-5deg]">CANCEL</button>
-                <button id="confirmBtn" onclick="submitBooking()" class="flex-1 bg-brand-orange text-white font-display text-2xl py-3 transform skew-x-[-5deg]">PAY & BOOK</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Manage Bookings Modal -->
-    <div id="manageModal" class="hidden fixed inset-0 bg-brand-navy bg-opacity-95 z-50 flex items-center justify-center p-4">
-        <div class="bg-white border-t-8 border-brand-orange p-8 max-w-lg w-full shadow-2xl relative">
-            <h3 class="text-4xl font-display text-brand-navy mb-4">MANAGE <span class="text-brand-orange">BOOKINGS</span></h3>
+    <div id="manageModal" class="fixed inset-0 bg-brand-dark/95 z-[100] hidden flex items-center justify-center p-4 backdrop-blur-md">
+        <div class="glass-panel w-full max-w-lg p-8 relative">
+            <button onclick="closeModal('manageModal')" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h2 class="text-3xl font-display font-bold uppercase tracking-wider mb-6 border-b border-white/10 pb-4">Manage <span class="text-brand-primary">Bookings</span></h2>
             
-            <div class="flex gap-2 mb-6">
-                <input type="tel" id="managePhone" placeholder="Enter Phone Number" class="flex-1 bg-gray-100 border-2 border-gray-300 p-3 text-brand-navy font-bold focus:border-brand-orange outline-none transform skew-x-[-2deg]">
-                <button onclick="fetchMyBookings()" class="bg-brand-navy text-white px-6 font-display text-xl transform skew-x-[-2deg]">SEARCH</button>
+            <div class="flex space-x-2 mb-6">
+                <input type="tel" id="managePhone" class="flex-grow bg-black/50 border border-white/20 rounded px-4 py-3 text-white focus:outline-none focus:border-brand-primary" placeholder="Enter registered phone number">
+                <button onclick="fetchMyBookings()" class="bg-brand-primary text-brand-dark px-6 font-bold uppercase tracking-widest rounded hover:bg-white transition-colors">Search</button>
             </div>
-
-            <div id="myBookingsList" class="space-y-4 max-h-64 overflow-y-auto pr-2">
-                <!-- Bookings populate here -->
+            
+            <div id="myBookingsList" class="space-y-4 max-h-96 overflow-y-auto pr-2 hide-scroll">
+                <p class="text-gray-500 italic text-center py-4">Enter your phone number to find your bookings.</p>
             </div>
-
-            <button onclick="closeModal('manageModal')" class="mt-6 w-full bg-gray-200 text-brand-navy font-display text-2xl py-3 transform skew-x-[-5deg]">CLOSE</button>
         </div>
     </div>
 
-    <!-- Toast -->
-    <div id="toast" class="fixed bottom-[-100px] left-1/2 transform -translate-x-1/2 px-8 py-4 bg-brand-navy text-white font-display text-2xl tracking-widest shadow-2xl transition-all duration-300 z-[1000] border-l-8 border-brand-orange"></div>
+    <!-- Toast Notification -->
+    <div id="toast" class="bg-brand-dark border-l-4 border-brand-primary text-white px-6 py-4 rounded shadow-2xl flex items-center space-x-3 font-bold uppercase tracking-wider text-sm min-w-[300px]">
+        <span id="toastIcon">ℹ️</span>
+        <span id="toastMsg">Notification</span>
+    </div>
 
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        // Calendar Logic
-        const calendarDays = document.getElementById('calendarDays');
-        let currentDate = new Date();
-        let selectedDateStr = null;
-        let selectedSlotObj = null;
+        AOS.init({ duration: 800, once: true });
 
-        function renderCalendar() {
-            calendarDays.innerHTML = '';
-            const year = currentDate.getFullYear();
-            const month = currentDate.getMonth();
-            const firstDay = new Date(year, month, 1).getDay();
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-            
-            document.getElementById('monthYear').textContent = currentDate.toLocaleDateString('default', { month: 'long', year: 'numeric' });
-            const today = new Date(); today.setHours(0,0,0,0);
+        /* =========================================================================
+           FIREBASE BACKEND LOGIC
+           ========================================================================= */
+        
+        // TODO: Replace with your actual Firebase Project Configuration!
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
 
-            for(let i = 0; i < firstDay; i++) {
-                calendarDays.appendChild(document.createElement('div'));
-            }
-
-            for(let i = 1; i <= daysInMonth; i++) {
-                const dateObj = new Date(year, month, i);
-                const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
-                
-                const div = document.createElement('div');
-                div.className = 'day-cell';
-                div.innerHTML = `<span>${i}</span>`;
-                
-                if (dateObj < today) {
-                    div.classList.add('disabled');
-                } else {
-                    if(selectedDateStr === dateStr) div.classList.add('selected');
-                    div.onclick = () => { selectedDateStr = dateStr; renderCalendar(); fetchSlots(); };
-                }
-                calendarDays.appendChild(div);
-            }
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
         }
+        const db = firebase.firestore();
 
-        document.getElementById('prevMonth').onclick = () => { currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(); };
-        document.getElementById('nextMonth').onclick = () => { currentDate.setMonth(currentDate.getMonth() + 1); renderCalendar(); };
-        
-        const t = new Date();
-        selectedDateStr = `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`;
-        renderCalendar(); fetchSlots();
-        
-        document.getElementById('locationSelect').addEventListener('change', fetchSlots);
-        document.getElementById('turfSelect').addEventListener('change', fetchSlots);
-
-        // LocalStorage DB Implementation for GitHub Pages
-        function getDB() { return JSON.parse(localStorage.getItem('turfx_bookings') || '[]'); }
-        function saveDB(data) { localStorage.setItem('turfx_bookings', JSON.stringify(data)); }
-        
-        function getPriceForSlot(timeSlot, location) {
-            const isPM = timeSlot.includes('PM');
-            let hour = parseInt(timeSlot.split(':')[0]);
-            if (isPM && hour !== 12) hour += 12;
-            if (!isPM && hour === 12) hour = 0;
-            const prices = { 'downtown': 2000, 'northside': 1500, 'eastside': 1200, 'westend': 1800, 'central': 2500 };
-            return hour >= 17 ? (prices[location] || 1500) + 500 : (prices[location] || 1500);
-        }
-
-        async function fetchSlots() {
-            if(!selectedDateStr) return;
-            const loc = document.getElementById('locationSelect').value;
-            const turf = document.getElementById('turfSelect').value;
-            const container = document.getElementById('slotsContainer');
-            const loader = document.getElementById('loadingSlots');
-            
-            container.innerHTML = ''; loader.classList.remove('hidden');
-
-            // Simulate network delay for aesthetic loader
-            setTimeout(() => {
-                const allSlots = [
-                    "9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "1:00 PM", "2:00 PM",
-                    "3:00 PM", "4:00 PM", "5:00 PM", "6:00 PM", "7:00 PM", "8:00 PM", "9:00 PM"
-                ];
-                const db = getDB();
-                const bookedMap = {};
-                db.filter(b => b.location === loc && b.turfId === turf && b.date === selectedDateStr)
-                  .forEach(b => bookedMap[b.slot] = b.customerName);
-
-                loader.classList.add('hidden');
-                
-                allSlots.forEach(time => {
-                    const isBooked = !!bookedMap[time];
-                    const price = getPriceForSlot(time, loc);
-                    const el = document.createElement('div');
-                    el.className = `slot-card border-4 p-5 bg-white ${isBooked ? 'border-gray-200 bg-gray-50 opacity-50' : 'border-brand-navy cursor-pointer hover:bg-brand-navy hover:text-white group'}`;
-                    
-                    if(isBooked) {
-                        el.innerHTML = `
-                            <div class="slot-card-inner flex justify-between items-center">
-                                <span class="text-2xl font-display text-gray-400">${time}</span>
-                                <span class="text-sm font-bold text-gray-500 bg-gray-200 px-2 py-1 uppercase">Booked</span>
-                            </div>`;
-                    } else {
-                        el.onclick = () => openBookingModal({time, price});
-                        el.innerHTML = `
-                            <div class="slot-card-inner">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="text-2xl font-display text-brand-navy group-hover:text-white">${time}</span>
-                                    <span class="text-xl font-display text-brand-orange">₹${price}</span>
-                                </div>
-                                <div class="text-sm font-bold text-gray-400 group-hover:text-brand-orange">SELECT SLOT &rarr;</div>
-                            </div>`;
+        const api = {
+            getBookedChunks: async (dateStr) => {
+                try {
+                    const snapshot = await db.collection('bookings').where('date', '==', dateStr).get();
+                    const booked = [];
+                    snapshot.forEach(doc => {
+                        doc.data().chunks.forEach(c => booked.push(c));
+                    });
+                    return booked;
+                } catch(e) {
+                    console.error("Firebase Error:", e);
+                    // Fallback or alert if unconfigured
+                    if (e.code === 'permission-denied') {
+                        showToast("Firebase Permissions Denied. Check Firestore Rules.", true);
+                    } else if (e.code === 'unauthenticated' || e.message.includes('YOUR_API_KEY')) {
+                        console.warn("Using LocalStorage fallback because Firebase isn't configured yet.");
+                        return getMockBookedChunks(dateStr);
                     }
-                    container.appendChild(el);
+                    return [];
+                }
+            },
+
+            createBooking: async (bookingData) => {
+                if (firebaseConfig.apiKey === "YOUR_API_KEY") {
+                    return createMockBooking(bookingData); // Fallback
+                }
+                
+                // 1. Check for conflicts
+                const dateStr = bookingData.date;
+                const snapshot = await db.collection('bookings').where('date', '==', dateStr).get();
+                let conflict = false;
+                snapshot.forEach(doc => {
+                    doc.data().chunks.forEach(c => {
+                        if (bookingData.chunks.includes(c)) conflict = true;
+                    });
                 });
-            }, 300);
+
+                if (conflict) {
+                    throw new Error("Slot unavailable! Someone just booked it.");
+                } else {
+                    // 2. Save to Firestore
+                    await db.collection('bookings').doc(bookingData.id.toString()).set(bookingData);
+                    return { success: true, id: bookingData.id };
+                }
+            },
+
+            getMyBookings: async (phone) => {
+                if (firebaseConfig.apiKey === "YOUR_API_KEY") return getMockMyBookings(phone);
+                try {
+                    const snapshot = await db.collection('bookings').where('phone', '==', phone).get();
+                    const bookings = [];
+                    snapshot.forEach(doc => bookings.push(doc.data()));
+                    return bookings.sort((a,b) => b.date.localeCompare(a.date));
+                } catch(e) {
+                    console.error(e);
+                    return [];
+                }
+            },
+
+            cancelBooking: async (id) => {
+                if (firebaseConfig.apiKey === "YOUR_API_KEY") return cancelMockBooking(id);
+                try {
+                    await db.collection('bookings').doc(id.toString()).delete();
+                } catch(e) {
+                    console.error(e);
+                }
+            }
+        };
+
+        // --- MOCK FALLBACKS (Used only if Firebase isn't configured yet) ---
+        const getMockDB = () => JSON.parse(localStorage.getItem('turfx_db_v2') || '[]');
+        const saveMockDB = (data) => localStorage.setItem('turfx_db_v2', JSON.stringify(data));
+        
+        async function getMockBookedChunks(dateStr) {
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    const db = getMockDB();
+                    const booked = [];
+                    db.filter(b => b.date === dateStr).forEach(b => b.chunks.forEach(c => booked.push(c)));
+                    resolve(booked);
+                }, 200); 
+            });
+        }
+        async function createMockBooking(bookingData) {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    const db = getMockDB();
+                    let conflict = false;
+                    db.filter(b => b.date === bookingData.date).forEach(b => {
+                        b.chunks.forEach(c => { if (bookingData.chunks.includes(c)) conflict = true; });
+                    });
+                    if (conflict) reject(new Error("Slot unavailable! Someone just booked it."));
+                    else { db.push(bookingData); saveMockDB(db); resolve({ success: true, id: bookingData.id }); }
+                }, 500);
+            });
+        }
+        async function getMockMyBookings(phone) {
+            return new Promise(resolve => {
+                setTimeout(() => resolve(getMockDB().filter(b => b.phone === phone).sort((a,b) => b.date.localeCompare(a.date))), 300);
+            });
+        }
+        async function cancelMockBooking(id) {
+            return new Promise(resolve => {
+                setTimeout(() => { let db = getMockDB(); saveMockDB(db.filter(b => b.id !== id)); resolve(); }, 300);
+            });
+        }
+        // -------------------------------------------------------------------
+
+        /* =========================================================================
+           UI LOGIC
+           ========================================================================= */
+        
+        let BASE_PRICE = 1100;
+        let EXTRA_PRICE = 550;
+        const ADVANCE_PRICE = 500;
+        const OPEN_HOUR = 9;  // 9:00 AM
+        const CLOSE_HOUR = 22; // 10:00 PM
+
+        let state = {
+            selectedDate: null, 
+            selectedSlotIndex: null, 
+            extendDuration: 0,
+            bookedChunks: [],
+            available1HrSlots: [],
+            isAuthenticated: false,
+            authUserPhone: null
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCalendar();
+        });
+
+        // Generate 30 days grid
+        function renderCalendar() {
+            const container = document.getElementById('calendarGrid');
+            container.innerHTML = '';
+            
+            const today = new Date();
+            today.setHours(0,0,0,0);
+
+            for (let i = 0; i < 30; i++) {
+                const d = new Date(today);
+                d.setDate(today.getDate() + i);
+                
+                const dateStr = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+                const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
+                const monthName = d.toLocaleDateString('en-US', { month: 'short' });
+                const dayNum = d.getDate();
+
+                const el = document.createElement('div');
+                el.className = `date-card border border-white/20 rounded-lg p-2 text-center flex flex-col items-center justify-center bg-black/40`;
+                el.dataset.date = dateStr;
+                
+                el.innerHTML = `
+                    <span class="text-[10px] uppercase font-bold text-gray-400 mb-1">${monthName}</span>
+                    <span class="text-xl font-display font-bold leading-none mb-1">${dayNum}</span>
+                    <span class="text-[10px] uppercase font-bold text-gray-400">${dayName}</span>
+                `;
+
+                el.onclick = () => selectDate(dateStr, el);
+                container.appendChild(el);
+            }
         }
 
-        // Modals & Booking
-        function openBookingModal(slot) {
-            selectedSlotObj = slot;
-            const locSel = document.getElementById('locationSelect');
-            const turfSel = document.getElementById('turfSelect');
-            document.getElementById('modalLoc').textContent = locSel.options[locSel.selectedIndex].text;
-            document.getElementById('modalTurf').textContent = turfSel.options[turfSel.selectedIndex].text;
-            document.getElementById('modalDateStr').textContent = selectedDateStr;
-            document.getElementById('modalTime').textContent = slot.time;
-            document.getElementById('modalPrice').textContent = `₹${slot.price}`;
-            document.getElementById('custName').value = '';
-            document.getElementById('custPhone').value = '';
-            document.getElementById('bookingModal').classList.remove('hidden');
+        async function selectDate(dateStr, el) {
+            const parts = dateStr.split("-"); const d = new Date(parts[0], parts[1] - 1, parts[2]);
+            const isWeekend = d.getDay() === 0 || d.getDay() === 6;
+            BASE_PRICE = isWeekend ? 1300 : 1100;
+            EXTRA_PRICE = isWeekend ? 650 : 550;
+            document.querySelectorAll('.date-card').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+            
+            state.selectedDate = dateStr;
+            resetSelection();
+            document.getElementById('stepTime').classList.remove('hidden');
+            
+            const container = document.getElementById('slotsContainer');
+            const loader = document.getElementById('slotsLoader');
+            
+            container.innerHTML = '';
+            loader.classList.replace('hidden', 'flex');
+
+            state.bookedChunks = await api.getBookedChunks(dateStr);
+            loader.classList.replace('flex', 'hidden');
+            
+            generateTimeSlots();
         }
 
-        function openManageModal() {
-            document.getElementById('manageModal').classList.remove('hidden');
-            document.getElementById('myBookingsList').innerHTML = '<p class="text-gray-500 italic">Enter your phone number to find your bookings.</p>';
+        function formatHour(val) {
+            const h = Math.floor(val);
+            const ampm = h >= 12 ? 'PM' : 'AM';
+            const displayH = h > 12 ? h - 12 : (h === 0 ? 12 : h);
+            return `${displayH} ${ampm}`;
+        }
+        
+        // Exact formatting: "9 - 10 AM"
+        function formatSlotName(startVal, endVal) {
+            const startH = Math.floor(startVal);
+            const endH = Math.floor(endVal);
+            const startDisplay = startH > 12 ? startH - 12 : (startH === 0 ? 12 : startH);
+            const endDisplay = endH > 12 ? endH - 12 : (endH === 0 ? 12 : endH);
+            const endAMPM = endH >= 12 && endH !== 24 ? 'PM' : 'AM';
+            return `${startDisplay} - ${endDisplay} ${endAMPM}`;
         }
 
-        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+        function generateTimeSlots() {
+            const container = document.getElementById('slotsContainer');
+            container.innerHTML = '';
+            state.available1HrSlots = [];
 
-        function showToast(msg, isError=false) {
-            const toast = document.getElementById('toast');
-            toast.textContent = msg;
-            toast.style.bottom = '50px';
-            toast.style.borderLeftColor = isError ? 'red' : '#ff5a00';
-            setTimeout(() => toast.style.bottom = '-100px', 3000);
+            const now = new Date();
+            const isToday = state.selectedDate === `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+            const currentHourVal = now.getHours() + (now.getMinutes() / 60);
+
+            let slotIndex = 0;
+            for (let i = OPEN_HOUR; i < CLOSE_HOUR; i += 1) {
+                const startVal = i;
+                const endVal = i + 1;
+                const slotName = formatSlotName(startVal, endVal);
+                const internalChunks = [startVal.toString(), (startVal + 0.5).toString()];
+
+                let isPast = isToday && startVal <= currentHourVal;
+                let isBooked = state.bookedChunks.includes(internalChunks[0]) || state.bookedChunks.includes(internalChunks[1]);
+                
+                state.available1HrSlots.push({
+                    index: slotIndex, startVal, endVal, slotName, internalChunks, isPast, isBooked
+                });
+
+                const el = document.createElement('div');
+                let classes = "time-slot border p-3 rounded text-center font-bold tracking-wider text-sm flex flex-col justify-center h-20 ";
+                
+                if (isPast) {
+                    classes += "past";
+                    el.innerHTML = `<span>${slotName}</span><span class="text-[10px] mt-1 font-normal opacity-50 uppercase">Past</span>`;
+                } else if (isBooked) {
+                    classes += "booked";
+                    el.innerHTML = `<span>${slotName}</span><span class="text-[10px] mt-1 font-normal opacity-50 uppercase">Booked</span>`;
+                } else {
+                    classes += "available border-white/20";
+                    el.innerHTML = `<span>${slotName}</span><span class="text-[10px] mt-1 font-normal text-brand-primary uppercase">₹${BASE_PRICE}</span>`;
+                    const currentIndex = slotIndex;
+                    el.onclick = () => selectSlot(currentIndex);
+                }
+
+                el.className = classes;
+                el.id = `slot-${slotIndex}`;
+                container.appendChild(el);
+                
+                slotIndex++;
+            }
+        }
+
+        function selectSlot(index) {
+            document.querySelectorAll('.time-slot.available').forEach(el => el.classList.remove('selected'));
+            document.getElementById(`slot-${index}`).classList.add('selected');
+            
+            state.selectedSlotIndex = index;
+            state.extendDuration = 0;
+            document.getElementById('chk30').checked = false; document.getElementById('chk60').checked = false; document.getElementById('durationError').classList.add('hidden');
+
+            updateSummary();
+            document.getElementById('stepPayment').classList.remove('hidden');
+            document.getElementById('stepPayment').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function toggleDuration(ext) {
+            const error = document.getElementById('durationError');
+            
+            if (state.extendDuration === ext) {
+                state.extendDuration = 0; // uncheck
+            } else {
+                if (!canExtend(ext)) {
+                    error.classList.remove('hidden');
+                    return; // do not update checkboxes or state
+                }
+                state.extendDuration = ext;
+            }
+            
+            error.classList.add('hidden');
+            document.getElementById('chk30').checked = (state.extendDuration === 0.5);
+            document.getElementById('chk60').checked = (state.extendDuration === 1.0);
+            updateSummary();
+        }
+
+        function canExtend(extendHours) {
+            if (state.selectedSlotIndex === null) return false;
+            const slot = state.available1HrSlots[state.selectedSlotIndex];
+            
+            if (slot.endVal + extendHours > CLOSE_HOUR) return false;
+            
+            // Check all chunks in the extended period
+            let chunksNeeded = extendHours / 0.5;
+            for(let i=0; i<chunksNeeded; i++) {
+                let chunkVal = (slot.endVal + (i * 0.5)).toString();
+                if (state.bookedChunks.includes(chunkVal)) return false;
+            }
+            return true;
+        }
+
+        function resetSelection() {
+            state.selectedSlotIndex = null;
+            state.extendDuration = 0;
+            document.getElementById('stepPayment').classList.add('hidden');
+        }
+
+        function updateSummary() {
+            document.getElementById('modalRateText').textContent = '₹' + BASE_PRICE;
+            const opt1 = document.getElementById('optExtra1'); if(opt1) opt1.textContent = EXTRA_PRICE;
+            const opt2 = document.getElementById('optExtra2'); if(opt2) opt2.textContent = EXTRA_PRICE * 2;
+            
+            const slot = state.available1HrSlots[state.selectedSlotIndex];
+            if(!slot) return;
+            
+            let timeStr = slot.slotName;
+            if(state.extendDuration > 0) {
+                const startH = Math.floor(slot.startVal);
+                const startDisplay = startH > 12 ? startH - 12 : (startH === 0 ? 12 : startH);
+                let eh = slot.endVal + state.extendDuration;
+                let ehFloor = Math.floor(eh);
+                let ehDisplay = ehFloor > 12 ? ehFloor - 12 : (ehFloor === 0 ? 12 : ehFloor);
+                let ampm = ehFloor >= 12 && ehFloor !== 24 ? 'PM' : 'AM';
+                let mins = (eh % 1 !== 0) ? ':30' : ':00';
+                timeStr = `${startDisplay}:00 - ${ehDisplay}${mins} ${ampm}`;
+            }
+
+            const totalPrice = BASE_PRICE + (state.extendDuration / 0.5) * EXTRA_PRICE;
+            const balance = totalPrice - ADVANCE_PRICE;
+
+            document.getElementById('modalDate').textContent = state.selectedDate;
+            document.getElementById('modalTime').textContent = timeStr;
+            document.getElementById('modalBalanceText').textContent = `Balance ₹${balance} at Venue`;
         }
 
         async function submitBooking() {
-            const customerName = document.getElementById('custName').value.trim();
-            const phone = document.getElementById('custPhone').value.trim();
-            const paymentMethod = document.getElementById('paymentMethod').value;
+            if (state.selectedSlotIndex === null || !state.selectedDate) return;
+            
+            const name = document.getElementById('custName').value.trim();
+            const phone = document.getElementById('authPhone').value.trim();
+            const method = document.getElementById('payMethod').value;
             const btn = document.getElementById('confirmBtn');
 
-            if(!customerName || !phone) return showToast('Please enter name and phone', true);
+            if (!name) return showToast('Please enter your name', true);
+            if (phone.length < 10) return showToast('Please enter a valid phone number', true);
 
-            btn.textContent = 'WAIT...'; btn.disabled = true;
+            btn.disabled = true;
+            btn.innerHTML = '<div class="loader ease-linear rounded-full border-2 border-t-2 border-white h-5 w-5 inline-block align-middle mr-2"></div> processing...';
 
-            setTimeout(() => {
-                const db = getDB();
-                const loc = document.getElementById('locationSelect').value;
-                const turf = document.getElementById('turfSelect').value;
-                
-                // Check if already booked
-                if(db.find(b => b.location === loc && b.turfId === turf && b.date === selectedDateStr && b.slot === selectedSlotObj.time)) {
-                    showToast('Slot already booked!', true);
-                    btn.textContent = 'PAY & BOOK'; btn.disabled = false;
-                    return;
+            const slot = state.available1HrSlots[state.selectedSlotIndex];
+            let requiredChunks = [...slot.internalChunks];
+            if (state.extendDuration > 0) {
+                let chunksNeeded = state.extendDuration / 0.5;
+                for(let i=0; i<chunksNeeded; i++) {
+                    requiredChunks.push((slot.endVal + (i * 0.5)).toString());
                 }
+            }
 
-                db.push({
-                    id: Date.now(), // Generate unique ID
-                    location: loc,
-                    turfId: turf,
-                    date: selectedDateStr,
-                    slot: selectedSlotObj.time,
-                    customerName, phone, paymentMethod,
-                    price: selectedSlotObj.price
-                });
-                saveDB(db);
+            let timeStr = slot.slotName;
+            if(state.extendDuration > 0) {
+                const startH = Math.floor(slot.startVal);
+                const startDisplay = startH > 12 ? startH - 12 : (startH === 0 ? 12 : startH);
+                let eh = slot.endVal + state.extendDuration;
+                let ehFloor = Math.floor(eh);
+                let ehDisplay = ehFloor > 12 ? ehFloor - 12 : (ehFloor === 0 ? 12 : ehFloor);
+                let ampm = ehFloor >= 12 && ehFloor !== 24 ? 'PM' : 'AM';
+                let mins = (eh % 1 !== 0) ? ':30' : ':00';
+                timeStr = `${startDisplay}:00 - ${ehDisplay}${mins} ${ampm}`;
+            }
 
-                showToast(`BOOKING CONFIRMED!`);
-                closeModal('bookingModal'); 
-                fetchSlots();
-                btn.textContent = 'PAY & BOOK'; btn.disabled = false;
-            }, 400);
+            const totalPrice = BASE_PRICE + (state.extendDuration / 0.5) * EXTRA_PRICE;
+
+            const bookingData = {
+                id: Date.now(),
+                timestamp: new Date().toISOString(),
+                customerName: name,
+                phone: phone,
+                sport: 'Common Turf',
+                paymentMethod: method,
+                date: state.selectedDate,
+                startTime: timeStr.split(' - ')[0],
+                endTime: timeStr.split(' - ')[1],
+                duration: state.extendDuration === 0.5 ? "1.5 Hours" : (state.extendDuration === 1.0 ? "2 Hours" : "1 Hour"),
+                chunks: requiredChunks,
+                price: totalPrice,
+                advancePaid: ADVANCE_PRICE,
+                balanceDue: totalPrice - ADVANCE_PRICE,
+                status: 'Confirmed'
+            };
+
+            try {
+                await api.createBooking(bookingData);
+                showToast('ADVANCE PAID & BOOKING CONFIRMED! 🏆', false);
+                
+                document.getElementById('custName').value = '';
+                document.getElementById('authPhone').value = '';
+                resetSelection();
+                
+                const activeDateEl = document.querySelector('.date-card.selected');
+                if (activeDateEl) {
+                    selectDate(state.selectedDate, activeDateEl);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            } catch (err) {
+                showToast(err.message, true);
+                const activeDateEl = document.querySelector('.date-card.selected');
+                if (activeDateEl) selectDate(state.selectedDate, activeDateEl);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Pay & Book';
+            }
         }
+
+        /* =========================================================================
+           MODALS & UTILS
+           ========================================================================= */
+        function openManageModal() {
+            document.getElementById('manageModal').classList.remove('hidden');
+            document.getElementById('myBookingsList').innerHTML = '<p class="text-gray-500 italic text-center py-4">Enter your phone number to find your bookings.</p>';
+            document.getElementById('managePhone').value = '';
+        }
+
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
         async function fetchMyBookings() {
             const phone = document.getElementById('managePhone').value.trim();
             if(!phone) return;
             const list = document.getElementById('myBookingsList');
-            list.innerHTML = '<p class="text-brand-orange animate-pulse font-bold">Searching...</p>';
+            list.innerHTML = '<div class="text-center py-4"><div class="loader ease-linear rounded-full border-2 border-t-2 border-brand-primary h-6 w-6 inline-block"></div></div>';
             
-            setTimeout(() => {
-                const db = getDB();
-                const bookings = db.filter(b => b.phone === phone).sort((a,b) => b.date.localeCompare(a.date));
-                
-                if(bookings.length === 0) {
-                    list.innerHTML = '<p class="text-gray-500 font-bold">No bookings found for this number.</p>';
-                    return;
-                }
+            const bookings = await api.getMyBookings(phone);
+            
+            if(bookings.length === 0) {
+                list.innerHTML = '<p class="text-gray-400 font-bold text-center py-4">No bookings found for this number.</p>';
+                return;
+            }
 
-                list.innerHTML = bookings.map(b => `
-                    <div class="border-2 border-gray-200 p-4 bg-gray-50 flex justify-between items-center transform skew-x-[-2deg]">
-                        <div>
-                            <p class="font-display text-xl text-brand-navy">${b.date} @ ${b.slot}</p>
-                            <p class="text-sm font-bold text-gray-500 uppercase">${b.location} - Pitch ${b.turfId} | ₹${b.price}</p>
-                        </div>
-                        <button onclick="cancelBooking(${b.id})" class="text-red-500 hover:text-red-700 font-bold uppercase underline">Cancel</button>
+            list.innerHTML = bookings.map(b => `
+                <div class="border border-white/20 p-4 rounded bg-white/5 flex flex-col sm:flex-row justify-between items-start sm:items-center">
+                    <div class="mb-3 sm:mb-0">
+                        <span class="text-xs uppercase tracking-widest text-brand-primary font-bold">Booking #${b.id.toString().slice(-6)} • ${b.sport}</span>
+                        <p class="font-display text-2xl text-white mt-1">${new Date(b.date).toLocaleDateString('en-US', {month:'short', day:'numeric'})} | ${b.startTime} - ${b.endTime}</p>
+                        <p class="text-sm font-bold text-gray-400 uppercase mt-1">₹${b.price} • ${b.duration}</p>
                     </div>
-                `).join('');
-            }, 300);
+                    <button onclick="cancelBooking(${b.id})" class="text-red-500 hover:text-white hover:bg-red-600 border border-red-500 px-4 py-2 text-sm font-bold uppercase tracking-widest rounded transition-colors">Cancel</button>
+                </div>
+            `).join('');
         }
 
         async function cancelBooking(id) {
             if(!confirm("Are you sure you want to cancel this booking?")) return;
-            const db = getDB();
-            const newDb = db.filter(b => b.id !== id);
-            saveDB(newDb);
+            await api.cancelBooking(id);
             showToast('Booking cancelled.');
             fetchMyBookings();
-            fetchSlots();
+            const activeDateEl = document.querySelector('.date-card.selected');
+            if (activeDateEl) selectDate(state.selectedDate, activeDateEl);
         }
 
-        // Initialize VanillaTilt for cards
-        document.addEventListener("DOMContentLoaded", () => {
-            if (typeof VanillaTilt !== 'undefined') {
-                VanillaTilt.init(document.querySelectorAll(".card"), {
-                    max: 5,
-                    speed: 400
-                });
-            }
+        function showToast(msg, isError=false) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').textContent = msg;
+            document.getElementById('toastIcon').textContent = isError ? '❌' : '✅';
+            toast.style.borderLeftColor = isError ? '#ef4444' : '#00e676';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+    </script>
+
+    <div id="mouseGlow" class="mouse-glow" style="top: -1000px; left: -1000px;"></div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const glow = document.getElementById('mouseGlow');
+            document.addEventListener('mousemove', (e) => {
+                if(glow) {
+                    glow.style.left = e.clientX + 'px';
+                    glow.style.top = e.clientY + 'px';
+                }
+            });
         });
     </script>
+
 </body>
 </html>
