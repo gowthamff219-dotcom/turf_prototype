@@ -104,7 +104,7 @@ const particlesScript = `
         particlesJS("particles-js", {
             particles: {
                 number: { value: 60, density: { enable: true, value_area: 800 } },
-                color: { value: "#ff6b00" },
+                color: { value: "#FC2B24" },
                 shape: { type: "circle" },
                 opacity: { value: 0.5, random: true },
                 size: { value: 3, random: true },

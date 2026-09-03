@@ -16,30 +16,30 @@
             theme: {
                 extend: {
                     fontFamily: { sans: ['Montserrat', 'sans-serif'], display: ['Oswald', 'sans-serif'] },
-                    colors: { brand: { primary: '#ff6b00', dark: '#111111', gray: '#2d3748', white: '#ffffff' } }
+                    colors: { brand: { primary: '#FC2B24', dark: '#0A0A0A', surface: '#121212', surface2: '#181818', gray: '#A8A8A8', white: '#F5F5F5' } }
                 }
             }
         }
     </script>
     <style>
-        body { font-family: 'Montserrat', sans-serif; background-color: #111111; color: #ffffff; overflow-x: hidden; }
+        body { font-family: 'Montserrat', sans-serif; background-color: #0A0A0A; color: #F5F5F5; overflow-x: hidden; }
         .glass-panel { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; }
         
         .date-card { transition: all 0.2s; cursor: pointer; }
-        .date-card.selected { background-color: #ff6b00; color: #111111; border-color: #ff6b00; transform: scale(1.05); }
-        .date-card:hover:not(.selected) { border-color: #ff6b00; }
+        .date-card.selected { background-color: #FC2B24; color: #111111; border-color: #FC2B24; transform: scale(1.05); }
+        .date-card:hover:not(.selected) { border-color: #FC2B24; }
 
         .time-slot { transition: all 0.2s; cursor: pointer; }
-        .time-slot.available:hover { border-color: #ff6b00; background-color: rgba(255,107,0,0.1); }
-        .time-slot.selected { background-color: #ff6b00; color: #111111; border-color: #ff6b00; transform: scale(1.05); }
+        .time-slot.available:hover { border-color: #FC2B24; background-color: rgba(252, 43, 36,0.1); }
+        .time-slot.selected { background-color: #FC2B24; color: #111111; border-color: #FC2B24; transform: scale(1.05); }
         .time-slot.booked { background-color: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); color: #666; cursor: not-allowed; text-decoration: line-through; }
         .time-slot.past { background-color: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); color: #444; cursor: not-allowed; }
 
         /* Toggle Switch */
-        .toggle-checkbox:checked { right: 0; border-color: #ff6b00; }
-        .toggle-checkbox:checked + .toggle-label { background-color: #ff6b00; }
+        .toggle-checkbox:checked { right: 0; border-color: #FC2B24; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #FC2B24; }
         
-        .loader { border-top-color: #ff6b00; -webkit-animation: spinner 1.5s linear infinite; animation: spinner 1.5s linear infinite; }
+        .loader { border-top-color: #FC2B24; -webkit-animation: spinner 1.5s linear infinite; animation: spinner 1.5s linear infinite; }
         @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         /* Toast */
@@ -47,12 +47,19 @@
         #toast.show { bottom: 30px; }
 
         .sport-btn { transition: all 0.3s; }
-        .sport-btn.selected { background-color: #ff6b00; color: #111111; border-color: #ff6b00; }
+        .sport-btn.selected { background-color: #FC2B24; color: #111111; border-color: #FC2B24; }
     
         /* --- Premium Animations --- */
         .btn-primary {
-            position: relative; overflow: hidden;
-            display: inline-block; transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            background: #FC2B24;
+            color: #FFFFFF;
+            border-radius: 12px;
+            box-shadow: 6px 6px 12px #060606, -6px -6px 12px #1e1e1e;
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            border: none;
+            display: inline-block;
             z-index: 1;
         }
         .btn-primary::before {
@@ -62,13 +69,16 @@
         }
         .btn-primary:hover::before { left: 100%; }
         .btn-primary:hover {
-            transform: scale(1.05) translateY(-2px);
-            box-shadow: 0 10px 20px -10px rgba(255, 107, 0, 0.8), 0 0 20px rgba(255, 107, 0, 0.4);
-            border-color: #ff6b00;
+            transform: scale(1.02) translateY(-1px);
+            box-shadow: 0 0 20px rgba(252, 43, 36, 0.4), 8px 8px 16px #040404, -8px -8px 16px #202020;
+        }
+        .btn-primary:active {
+            box-shadow: inset 4px 4px 10px rgba(0,0,0,0.5), inset -4px -4px 10px rgba(255,255,255,0.1);
+            transform: scale(0.98);
         }
         
         .mouse-glow {
-            position: fixed; width: 400px; height: 400px; background: radial-gradient(circle, rgba(255,107,0,0.15) 0%, transparent 70%);
+            position: fixed; width: 400px; height: 400px; background: radial-gradient(circle, rgba(252, 43, 36,0.15) 0%, transparent 70%);
             border-radius: 50%; pointer-events: none; z-index: 50; mix-blend-mode: screen;
             transform: translate(-50%, -50%); transition: top 0.1s, left 0.1s;
         }
@@ -85,9 +95,9 @@
         }
         
         @keyframes textGlow {
-            0% { text-shadow: 0 0 10px rgba(255, 107, 0, 0.2), 0 0 20px rgba(255, 107, 0, 0.1); }
-            50% { text-shadow: 0 0 20px rgba(255, 107, 0, 0.6), 0 0 40px rgba(255, 107, 0, 0.3); }
-            100% { text-shadow: 0 0 10px rgba(255, 107, 0, 0.2), 0 0 20px rgba(255, 107, 0, 0.1); }
+            0% { text-shadow: 0 0 10px rgba(252, 43, 36, 0.2), 0 0 20px rgba(252, 43, 36, 0.1); }
+            50% { text-shadow: 0 0 20px rgba(252, 43, 36, 0.6), 0 0 40px rgba(252, 43, 36, 0.3); }
+            100% { text-shadow: 0 0 10px rgba(252, 43, 36, 0.2), 0 0 20px rgba(252, 43, 36, 0.1); }
         }
         
         .anim-glow {
@@ -106,20 +116,52 @@
         }
         /* -------------------------- */
 
+
+        .neu-surface {
+            background: #121212 !important;
+            border-radius: 16px !important;
+            box-shadow: 8px 8px 16px #050505, -8px -8px 16px #1f1f1f !important;
+            border: 1px solid rgba(255,255,255,0.03) !important;
+        }
+        .neu-inset {
+            background: #0A0A0A !important;
+            border-radius: 8px !important;
+            box-shadow: inset 4px 4px 8px #040404, inset -4px -4px 8px #101010 !important;
+            border: 1px solid rgba(255,255,255,0.02) !important;
+            color: #F5F5F5 !important;
+        }
+        .neu-slot {
+            background: #121212;
+            border-radius: 12px;
+            box-shadow: 5px 5px 10px #060606, -5px -5px 10px #1e1e1e;
+            border: 1px solid rgba(255,255,255,0.02);
+            transition: all 0.3s ease;
+        }
+        .neu-slot:hover {
+            box-shadow: 0 0 10px rgba(252,43,36,0.3), 5px 5px 10px #050505, -5px -5px 10px #1f1f1f;
+            transform: translateY(-2px);
+        }
+        .neu-slot.selected {
+            background: #FC2B24 !important;
+            color: #ffffff !important;
+            box-shadow: 0 0 15px rgba(252,43,36,0.6), inset 2px 2px 5px rgba(0,0,0,0.2) !important;
+            border-color: #FC2B24 !important;
+        }
+
 </style>
 </head>
 <body class="min-h-screen flex flex-col">
 
     <!-- Navigation -->
-    <nav class="fixed w-full z-50 py-4 bg-brand-dark/95 backdrop-blur-md border-b border-white/10" id="navbar">
+    <nav class="fixed w-full z-50 py-4 bg-[#0A0A0A]/95 backdrop-blur-md border-b border-white/10" id="navbar">
         <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
             <a href="index.html" class="text-3xl font-display font-bold tracking-widest text-white">
-                5TH YARD <span class="text-brand-primary">TURF</span>
+                5TH YARD <span class="text-[#FC2B24]">TURF</span>
             </a>
             <div class="hidden md:flex space-x-8 font-bold text-sm tracking-widest">
-                <a href="index.html" class="hover:text-brand-primary transition-colors text-white uppercase">Home</a>
-                <a href="turf.html" class="hover:text-brand-primary transition-colors text-white uppercase">Turf Specs</a>
-                <a href="book.html" class="text-brand-primary transition-colors uppercase">Book Now</a>
+                <a href="index.html" class="hover:text-[#FC2B24] transition-colors text-white uppercase">Home</a>
+                <a href="turf.html" class="hover:text-[#FC2B24] transition-colors text-white uppercase">Turf Specs</a>
+                <a href="book.html" class="text-[#FC2B24] transition-colors uppercase">Book Now</a>
             </div>
         </div>
     </nav>
@@ -129,9 +171,9 @@
         <div class="max-w-5xl mx-auto px-4 sm:px-6">
             
             <div class="text-center mb-10" data-aos="fade-down">
-                <h1 class="text-4xl md:text-5xl font-display font-bold uppercase tracking-wider mb-2">Book Your <span class="text-brand-primary">Slot</span></h1>
-                <p class="text-gray-400">1 Turf. Endless Possibilities. Lock it in.</p>
-                <button onclick="openManageModal()" class="mt-4 text-brand-primary hover:text-white underline text-sm font-bold uppercase tracking-widest transition-colors">Manage My Bookings</button>
+                <h1 class="text-4xl md:text-5xl font-display font-bold uppercase tracking-wider mb-2">Book Your <span class="text-[#FC2B24]">Slot</span></h1>
+                <p class="text-[#A8A8A8]">1 Turf. Endless Possibilities. Lock it in.</p>
+                <button onclick="openManageModal()" class="mt-4 text-[#FC2B24] hover:text-white underline text-sm font-bold uppercase tracking-widest transition-colors">Manage My Bookings</button>
             </div>
 
             <div class="glass-panel p-6 md:p-10 relative overflow-hidden" data-aos="fade-up">
@@ -139,7 +181,7 @@
                 <!-- Step 1: Date Grid -->
                 <div class="mb-10" id="stepDate">
                     <h3 class="text-xl font-bold uppercase tracking-widest mb-4 flex items-center">
-                        <span class="w-8 h-8 rounded-full bg-brand-primary text-brand-dark flex items-center justify-center mr-3 font-display">1</span> 
+                        <span class="w-8 h-8 rounded-full bg-[#FC2B24] text-white flex items-center justify-center mr-3 font-display">1</span> 
                         Select Date
                     </h3>
                     <div class="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-7 gap-3" id="calendarGrid">
@@ -151,11 +193,11 @@
                 <div class="mb-10 hidden" id="stepTime">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-4 gap-4">
                         <h3 class="text-xl font-bold uppercase tracking-widest flex items-center">
-                            <span class="w-8 h-8 rounded-full bg-brand-primary text-brand-dark flex items-center justify-center mr-3 font-display">2</span> 
+                            <span class="w-8 h-8 rounded-full bg-[#FC2B24] text-white flex items-center justify-center mr-3 font-display">2</span> 
                             Select 1-Hour Slot
                         </h3>
                         <div class="flex items-center space-x-4 text-xs font-bold uppercase tracking-widest">
-                            <span class="flex items-center"><div class="w-3 h-3 bg-brand-primary mr-2"></div>Selected</span>
+                            <span class="flex items-center"><div class="w-3 h-3 bg-[#FC2B24] mr-2"></div>Selected</span>
                             <span class="flex items-center"><div class="w-3 h-3 bg-white/10 mr-2"></div>Booked</span>
                             <span class="flex items-center"><div class="w-3 h-3 border border-white/30 mr-2"></div>Available</span>
                         </div>
@@ -174,27 +216,27 @@
                 <!-- Step 3: Payment Details -->
                 <div id="stepPayment" class="hidden mt-12 pt-10 border-t border-white/10 animate-fade-in">
                     <h3 class="text-xl font-bold uppercase tracking-widest mb-6 flex items-center">
-                        <span class="w-8 h-8 rounded-full bg-brand-primary text-brand-dark flex items-center justify-center mr-3 font-display">3</span> 
+                        <span class="w-8 h-8 rounded-full bg-[#FC2B24] text-white flex items-center justify-center mr-3 font-display">3</span> 
                         Confirm & Pay
                     </h3>
                     
-                    <div class="bg-black/50 border border-white/5 rounded-xl p-6 sm:p-8">
+                    <div class="neu-surface p-6 sm:p-8">
                         <p class="font-bold text-gray-500 text-sm mb-1">
                             5TH YARD TURF (<span id="modalRateText">₹1100</span>/hr) - Football / Cricket Turf
                         </p>
-                        <p class="font-bold text-gray-300 mb-6">
+                        <p class="font-bold text-[#A8A8A8] mb-6">
                             <span id="modalDate"></span> @ <span id="modalTime"></span>
                         </p>
 
                         <div class="grid sm:grid-cols-2 gap-6 mb-6">
                             <div>
                                 <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Player Name</label>
-                                <input type="text" id="custName" class="w-full bg-white/5 border border-white/10 rounded-sm px-4 py-3 text-white focus:outline-none focus:border-brand-primary font-bold" placeholder="">
+                                <input type="text" id="custName" class="w-full neu-inset px-4 py-3 text-white focus:outline-none focus:border-[#FC2B24] font-bold" placeholder="">
                             </div>
                             
                             <div>
                                 <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Phone Number</label>
-                                <input type="tel" id="authPhone" class="w-full bg-white/5 border border-white/10 rounded-sm px-4 py-3 text-white focus:outline-none focus:border-brand-primary font-bold" placeholder="">
+                                <input type="tel" id="authPhone" class="w-full neu-inset px-4 py-3 text-white focus:outline-none focus:border-[#FC2B24] font-bold" placeholder="">
                             </div>
                         </div>
 
@@ -202,15 +244,15 @@
                         <div class="mb-6">
                             <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Extend Booking</label>
                             
-                            <div class="flex items-center space-x-3 bg-white/5 p-4 border border-white/10 rounded-sm cursor-pointer mb-2" onclick="toggleDuration(0.5)">
-                                <input type="checkbox" id="chk30" class="w-5 h-5 text-brand-primary border-gray-600 rounded bg-transparent focus:ring-brand-primary pointer-events-none">
+                            <div class="flex items-center space-x-3 neu-slot p-4 cursor-pointer mb-2" onclick="toggleDuration(0.5)">
+                                <input type="checkbox" id="chk30" class="w-5 h-5 text-[#FC2B24] border-gray-600 rounded bg-transparent focus:ring-[#FC2B24] pointer-events-none">
                                 <div class="flex-1">
                                     <p class="font-bold text-sm text-gray-200 uppercase tracking-wide">Add 30 Mins Extra (+₹<span id="optExtra1">550</span>)</p>
                                 </div>
                             </div>
 
-                            <div class="flex items-center space-x-3 bg-white/5 p-4 border border-white/10 rounded-sm cursor-pointer mb-2" onclick="toggleDuration(1.0)">
-                                <input type="checkbox" id="chk60" class="w-5 h-5 text-brand-primary border-gray-600 rounded bg-transparent focus:ring-brand-primary pointer-events-none">
+                            <div class="flex items-center space-x-3 neu-slot p-4 cursor-pointer mb-2" onclick="toggleDuration(1.0)">
+                                <input type="checkbox" id="chk60" class="w-5 h-5 text-[#FC2B24] border-gray-600 rounded bg-transparent focus:ring-[#FC2B24] pointer-events-none">
                                 <div class="flex-1">
                                     <p class="font-bold text-sm text-gray-200 uppercase tracking-wide">Add 1 Hour Extra (+₹<span id="optExtra2">1100</span>)</p>
                                 </div>
@@ -221,23 +263,23 @@
 
                         <div class="mt-6 mb-8">
                             <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Payment Method</label>
-                            <select id="payMethod" class="w-full sm:w-1/2 bg-white/5 border border-white/10 rounded-sm px-4 py-3 text-white font-bold focus:outline-none focus:border-brand-primary appearance-none">
+                            <select id="payMethod" class="w-full sm:w-1/2 neu-inset px-4 py-3 text-white font-bold focus:outline-none focus:border-[#FC2B24] appearance-none">
                                 <option value="UPI" class="text-black">UPI (GPay, PhonePe, Paytm)</option>
                                 <option value="Card" class="text-black">Credit / Debit Card</option>
                             </select>
                         </div>
 
                         <!-- Price Box -->
-                        <div class="bg-brand-primary/10 border border-brand-primary/30 p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center rounded-sm mb-6">
+                        <div class="neu-inset border-[#FC2B24]/30 p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center rounded-sm mb-6">
                             <div class="mb-2 sm:mb-0">
-                                <span class="block text-xs font-bold uppercase tracking-wider text-brand-primary">Advance to Pay Now</span>
-                                <span class="block text-[11px] font-bold uppercase text-gray-400 mt-1" id="modalBalanceText">Balance ₹600 at Venue</span>
+                                <span class="block text-xs font-bold uppercase tracking-wider text-[#FC2B24]">Advance to Pay Now</span>
+                                <span class="block text-[11px] font-bold uppercase text-[#A8A8A8] mt-1" id="modalBalanceText">Balance ₹600 at Venue</span>
                             </div>
-                            <span class="text-4xl font-display font-bold text-brand-primary">₹500</span>
+                            <span class="text-4xl font-display font-bold text-[#FC2B24]">₹500</span>
                         </div>
 
                         <div class="flex space-x-4">
-                            <button id="confirmBtn" onclick="submitBooking()" class="flex-1 bg-brand-primary text-brand-dark font-display font-bold text-xl py-4 rounded-sm uppercase tracking-widest hover:bg-white transition-colors">
+                            <button id="confirmBtn" onclick="submitBooking()" class="flex-1 btn-primary font-display font-bold text-xl py-4 uppercase tracking-widest">
                                 Pay & Book Now
                             </button>
                         </div>
@@ -250,16 +292,16 @@
     </main>
 
     <!-- Manage Bookings Modal -->
-    <div id="manageModal" class="fixed inset-0 bg-brand-dark/95 z-[100] hidden flex items-center justify-center p-4 backdrop-blur-md">
+    <div id="manageModal" class="fixed inset-0 bg-[#0A0A0A]/95 z-[100] hidden flex items-center justify-center p-4 backdrop-blur-md">
         <div class="glass-panel w-full max-w-lg p-8 relative">
-            <button onclick="closeModal('manageModal')" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+            <button onclick="closeModal('manageModal')" class="absolute top-4 right-4 text-[#A8A8A8] hover:text-white">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
-            <h2 class="text-3xl font-display font-bold uppercase tracking-wider mb-6 border-b border-white/10 pb-4">Manage <span class="text-brand-primary">Bookings</span></h2>
+            <h2 class="text-3xl font-display font-bold uppercase tracking-wider mb-6 border-b border-white/10 pb-4">Manage <span class="text-[#FC2B24]">Bookings</span></h2>
             
             <div class="flex space-x-2 mb-6">
-                <input type="tel" id="managePhone" class="flex-grow bg-black/50 border border-white/20 rounded px-4 py-3 text-white focus:outline-none focus:border-brand-primary" placeholder="Enter registered phone number">
-                <button onclick="fetchMyBookings()" class="bg-brand-primary text-brand-dark px-6 font-bold uppercase tracking-widest rounded hover:bg-white transition-colors">Search</button>
+                <input type="tel" id="managePhone" class="flex-grow neu-inset px-4 py-3 text-white focus:outline-none focus:border-[#FC2B24]" placeholder="Enter registered phone number">
+                <button onclick="fetchMyBookings()" class="btn-primary px-6 font-bold uppercase tracking-widest rounded">Search</button>
             </div>
             
             <div id="myBookingsList" class="space-y-4 max-h-96 overflow-y-auto pr-2 hide-scroll">
@@ -269,7 +311,7 @@
     </div>
 
     <!-- Toast Notification -->
-    <div id="toast" class="bg-brand-dark border-l-4 border-brand-primary text-white px-6 py-4 rounded shadow-2xl flex items-center space-x-3 font-bold uppercase tracking-wider text-sm min-w-[300px]">
+    <div id="toast" class="bg-[#0A0A0A] border-l-4 border-[#FC2B24] text-white px-6 py-4 rounded shadow-2xl flex items-center space-x-3 font-bold uppercase tracking-wider text-sm min-w-[300px]">
         <span id="toastIcon">ℹ️</span>
         <span id="toastMsg">Notification</span>
     </div>
@@ -448,13 +490,13 @@
                 const dayNum = d.getDate();
 
                 const el = document.createElement('div');
-                el.className = `date-card border border-white/20 rounded-lg p-2 text-center flex flex-col items-center justify-center bg-black/40`;
+                el.className = `date-card neu-slot p-2 text-center flex flex-col items-center justify-center cursor-pointer`;
                 el.dataset.date = dateStr;
                 
                 el.innerHTML = `
-                    <span class="text-[10px] uppercase font-bold text-gray-400 mb-1">${monthName}</span>
+                    <span class="text-[10px] uppercase font-bold text-[#A8A8A8] mb-1">${monthName}</span>
                     <span class="text-xl font-display font-bold leading-none mb-1">${dayNum}</span>
-                    <span class="text-[10px] uppercase font-bold text-gray-400">${dayName}</span>
+                    <span class="text-[10px] uppercase font-bold text-[#A8A8A8]">${dayName}</span>
                 `;
 
                 el.onclick = () => selectDate(dateStr, el);
@@ -537,7 +579,7 @@
                     el.innerHTML = `<span>${slotName}</span><span class="text-[10px] mt-1 font-normal opacity-50 uppercase">Booked</span>`;
                 } else {
                     classes += "available border-white/20";
-                    el.innerHTML = `<span>${slotName}</span><span class="text-[10px] mt-1 font-normal text-brand-primary uppercase">₹${BASE_PRICE}</span>`;
+                    el.innerHTML = `<span>${slotName}</span><span class="text-[10px] mt-1 font-normal text-[#FC2B24] uppercase">₹${BASE_PRICE}</span>`;
                     const currentIndex = slotIndex;
                     el.onclick = () => selectSlot(currentIndex);
                 }
@@ -724,21 +766,21 @@
             const phone = document.getElementById('managePhone').value.trim();
             if(!phone) return;
             const list = document.getElementById('myBookingsList');
-            list.innerHTML = '<div class="text-center py-4"><div class="loader ease-linear rounded-full border-2 border-t-2 border-brand-primary h-6 w-6 inline-block"></div></div>';
+            list.innerHTML = '<div class="text-center py-4"><div class="loader ease-linear rounded-full border-2 border-t-2 border-[#FC2B24] h-6 w-6 inline-block"></div></div>';
             
             const bookings = await api.getMyBookings(phone);
             
             if(bookings.length === 0) {
-                list.innerHTML = '<p class="text-gray-400 font-bold text-center py-4">No bookings found for this number.</p>';
+                list.innerHTML = '<p class="text-[#A8A8A8] font-bold text-center py-4">No bookings found for this number.</p>';
                 return;
             }
 
             list.innerHTML = bookings.map(b => `
                 <div class="border border-white/20 p-4 rounded bg-white/5 flex flex-col sm:flex-row justify-between items-start sm:items-center">
                     <div class="mb-3 sm:mb-0">
-                        <span class="text-xs uppercase tracking-widest text-brand-primary font-bold">Booking #${b.id.toString().slice(-6)} • ${b.sport}</span>
+                        <span class="text-xs uppercase tracking-widest text-[#FC2B24] font-bold">Booking #${b.id.toString().slice(-6)} • ${b.sport}</span>
                         <p class="font-display text-2xl text-white mt-1">${new Date(b.date).toLocaleDateString('en-US', {month:'short', day:'numeric'})} | ${b.startTime} - ${b.endTime}</p>
-                        <p class="text-sm font-bold text-gray-400 uppercase mt-1">₹${b.price} • ${b.duration}</p>
+                        <p class="text-sm font-bold text-[#A8A8A8] uppercase mt-1">₹${b.price} • ${b.duration}</p>
                     </div>
                     <button onclick="cancelBooking(${b.id})" class="text-red-500 hover:text-white hover:bg-red-600 border border-red-500 px-4 py-2 text-sm font-bold uppercase tracking-widest rounded transition-colors">Cancel</button>
                 </div>

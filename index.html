@@ -12,15 +12,15 @@
             theme: {
                 extend: {
                     fontFamily: { sans: ['Montserrat', 'sans-serif'], display: ['Oswald', 'sans-serif'] },
-                    colors: { brand: { primary: '#ff6b00', dark: '#111111', gray: '#2d3748', white: '#ffffff' } }
+                    colors: { brand: { primary: '#FC2B24', dark: '#0A0A0A', surface: '#121212', surface2: '#181818', gray: '#A8A8A8', white: '#F5F5F5' } }
                 }
             }
         }
     </script>
     <style>
-        body { font-family: 'Montserrat', sans-serif; background-color: #111111; color: #ffffff; overflow-x: hidden; scroll-behavior: smooth; }
+        body { font-family: 'Montserrat', sans-serif; background-color: #0A0A0A; color: #F5F5F5; overflow-x: hidden; scroll-behavior: smooth; }
         .hero-bg {
-            background: #111111;
+            background: #0A0A0A;
         }
         .video-wrapper {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -33,11 +33,11 @@
         }
         .video-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, rgba(17,17,17,0.7), rgba(255,107,0,0.15));
+            background: linear-gradient(135deg, rgba(17,17,17,0.7), rgba(252, 43, 36,0.15));
             z-index: 1;
         }
         
-        .glass-card {
+        .neu-surface {
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
@@ -46,8 +46,8 @@
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
             transition: all 0.3s ease;
         }
-        .glass-card:hover {
-            border-color: #ff6b00;
+        .neu-surface:hover {
+            border-color: #FC2B24;
             transform: translateY(-5px);
             background: rgba(255, 255, 255, 0.08);
         }
@@ -56,8 +56,15 @@
         .clip-slant { clip-path: polygon(0 10%, 100% 0, 100% 90%, 0 100%); }
         
         .btn-primary {
-            position: relative; overflow: hidden;
-            display: inline-block; transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            background: #FC2B24;
+            color: #FFFFFF;
+            border-radius: 12px;
+            box-shadow: 6px 6px 12px #060606, -6px -6px 12px #1e1e1e;
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            border: none;
+            display: inline-block;
             z-index: 1;
         }
         .btn-primary::before {
@@ -67,13 +74,16 @@
         }
         .btn-primary:hover::before { left: 100%; }
         .btn-primary:hover {
-            transform: scale(1.05) translateY(-2px);
-            box-shadow: 0 10px 20px -10px rgba(255, 107, 0, 0.8), 0 0 20px rgba(255, 107, 0, 0.4);
-            border-color: #ff6b00;
+            transform: scale(1.02) translateY(-1px);
+            box-shadow: 0 0 20px rgba(252, 43, 36, 0.4), 8px 8px 16px #040404, -8px -8px 16px #202020;
+        }
+        .btn-primary:active {
+            box-shadow: inset 4px 4px 10px rgba(0,0,0,0.5), inset -4px -4px 10px rgba(255,255,255,0.1);
+            transform: scale(0.98);
         }
         
         .mouse-glow {
-            position: fixed; width: 400px; height: 400px; background: radial-gradient(circle, rgba(255,107,0,0.15) 0%, transparent 70%);
+            position: fixed; width: 400px; height: 400px; background: radial-gradient(circle, rgba(252, 43, 36,0.15) 0%, transparent 70%);
             border-radius: 50%; pointer-events: none; z-index: 50; mix-blend-mode: screen;
             transform: translate(-50%, -50%); transition: top 0.1s, left 0.1s;
         }
@@ -98,7 +108,7 @@
             border-radius: 8px; transition: all 0.5s ease;
             filter: grayscale(40%);
         }
-        .img-marquee-content img:hover { transform: scale(1.05); filter: grayscale(0%); border-color: #ff6b00; }
+        .img-marquee-content img:hover { transform: scale(1.05); filter: grayscale(0%); border-color: #FC2B24; }
         @keyframes img-marquee {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
@@ -129,9 +139,9 @@
         }
         
         @keyframes textGlow {
-            0% { text-shadow: 0 0 10px rgba(255, 107, 0, 0.2), 0 0 20px rgba(255, 107, 0, 0.1); }
-            50% { text-shadow: 0 0 20px rgba(255, 107, 0, 0.6), 0 0 40px rgba(255, 107, 0, 0.3); }
-            100% { text-shadow: 0 0 10px rgba(255, 107, 0, 0.2), 0 0 20px rgba(255, 107, 0, 0.1); }
+            0% { text-shadow: 0 0 10px rgba(252, 43, 36, 0.2), 0 0 20px rgba(252, 43, 36, 0.1); }
+            50% { text-shadow: 0 0 20px rgba(252, 43, 36, 0.6), 0 0 40px rgba(252, 43, 36, 0.3); }
+            100% { text-shadow: 0 0 10px rgba(252, 43, 36, 0.2), 0 0 20px rgba(252, 43, 36, 0.1); }
         }
         
         .anim-glow {
@@ -158,27 +168,137 @@
         .ambient-glow-bg {
             position: absolute;
             top: -10%; left: -10%; width: 120%; height: 120%;
-            background: radial-gradient(circle at center, rgba(255,107,0,0.15) 0%, transparent 60%);
+            background: radial-gradient(circle at center, rgba(252, 43, 36,0.15) 0%, transparent 60%);
             z-index: 0;
             pointer-events: none;
             background-size: 200% 200%;
             animation: ambientLight 10s ease infinite;
         }
         /* -------------------------- */
+
+        .neu-surface {
+            background: #121212 !important;
+            border-radius: 16px !important;
+            box-shadow: 8px 8px 16px #050505, -8px -8px 16px #1f1f1f !important;
+            border: 1px solid rgba(255,255,255,0.03) !important;
+        }
+        .neu-inset {
+            background: #0A0A0A !important;
+            border-radius: 8px !important;
+            box-shadow: inset 4px 4px 8px #040404, inset -4px -4px 8px #101010 !important;
+            border: 1px solid rgba(255,255,255,0.02) !important;
+            color: #F5F5F5 !important;
+        }
+        .neu-slot {
+            background: #121212;
+            border-radius: 12px;
+            box-shadow: 5px 5px 10px #060606, -5px -5px 10px #1e1e1e;
+            border: 1px solid rgba(255,255,255,0.02);
+            transition: all 0.3s ease;
+        }
+        .neu-slot:hover {
+            box-shadow: 0 0 10px rgba(252,43,36,0.3), 5px 5px 10px #050505, -5px -5px 10px #1f1f1f;
+            transform: translateY(-2px);
+        }
+        .neu-slot.selected {
+            background: #FC2B24 !important;
+            color: #ffffff !important;
+            box-shadow: 0 0 15px rgba(252,43,36,0.6), inset 2px 2px 5px rgba(0,0,0,0.2) !important;
+            border-color: #FC2B24 !important;
+        }
+
+
+        .btn-secondary {
+            background: #181818;
+            color: #F5F5F5;
+            border-radius: 12px;
+            box-shadow: 5px 5px 10px #060606, -5px -5px 10px #1e1e1e;
+            border: 1px solid rgba(255,255,255,0.03);
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        .btn-secondary:hover {
+            border-color: #FC2B24;
+            box-shadow: 0 0 10px rgba(252, 43, 36, 0.2), 5px 5px 12px #040404, -5px -5px 12px #202020;
+            color: #FC2B24;
+        }
+        .btn-secondary:active {
+            box-shadow: inset 4px 4px 8px #0a0a0a, inset -4px -4px 8px #262626;
+        }
+
+        :root {
+            --cinematic-duration: 4s;
+        }
+
+        @keyframes cinematicSpinBlur {
+            0% {
+                transform: perspective(1000px) rotateX(-90deg) translateY(30px);
+                filter: blur(20px);
+                opacity: 0;
+                animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+            }
+            15% {
+                transform: perspective(1000px) rotateX(-30deg) translateY(10px);
+                filter: blur(10px);
+                opacity: 0.5;
+                animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+            }
+            35% {
+                transform: perspective(1000px) rotateX(0deg) translateY(0);
+                filter: blur(0px);
+                opacity: 1;
+                animation-timing-function: linear;
+            }
+            70% {
+                transform: perspective(1000px) rotateX(0deg) translateY(0);
+                filter: blur(0px);
+                opacity: 1;
+                animation-timing-function: cubic-bezier(0.8, 0.2, 0.8, 1);
+            }
+            95% {
+                transform: perspective(1000px) rotateX(90deg) translateY(-30px);
+                filter: blur(20px);
+                opacity: 0;
+                animation-timing-function: linear;
+            }
+            100% {
+                transform: perspective(1000px) rotateX(90deg) translateY(-30px);
+                filter: blur(20px);
+                opacity: 0;
+            }
+        }
+
+        .anim-cinematic-text {
+            display: inline-block;
+            animation: cinematicSpinBlur var(--cinematic-duration) infinite;
+            transform-style: preserve-3d;
+            will-change: transform, filter, opacity;
+            text-shadow: 0 0 10px rgba(252, 43, 36, 0.3); /* Subtle red glow as requested */
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .anim-cinematic-text {
+                animation: none;
+                transform: none;
+                filter: none;
+                opacity: 1;
+            }
+        }
+
 </style>
 </head>
 <body>
 
     <!-- Navigation -->
-    <nav class="fixed w-full z-50 py-6 transition-all duration-300 bg-brand-dark/80 backdrop-blur-md border-b border-white/5" id="navbar">
+    <nav class="fixed w-full z-50 py-6 transition-all duration-300 bg-[#0A0A0A]/80 backdrop-blur-md border-b border-white/5" id="navbar">
         <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
             <a href="index.html" class="text-3xl font-display font-bold tracking-widest text-white">
-                5TH YARD <span class="text-brand-primary">TURF</span>
+                5TH YARD <span class="text-[#FC2B24]">TURF</span>
             </a>
             <div class="hidden md:flex space-x-8 font-bold text-sm tracking-widest">
-                <a href="index.html" class="hover:text-brand-primary transition-colors text-brand-primary uppercase">Home</a>
-                <a href="turf.html" class="hover:text-brand-primary transition-colors text-white uppercase">Turf Specs</a>
-                <a href="book.html" class="hover:text-brand-primary transition-colors text-white uppercase">Book Now</a>
+                <a href="index.html" class="hover:text-[#FC2B24] transition-colors text-[#FC2B24] uppercase">Home</a>
+                <a href="turf.html" class="hover:text-[#FC2B24] transition-colors text-white uppercase">Turf Specs</a>
+                <a href="book.html" class="hover:text-[#FC2B24] transition-colors text-white uppercase">Book Now</a>
             </div>
         </div>
     </nav>
@@ -195,17 +315,17 @@
         
         <div class="max-w-7xl mx-auto px-6 w-full relative z-10 pt-20">
             <div class="ambient-glow-bg"></div>
-            <div class="max-w-4xl glass-card p-12 rounded-2xl relative z-10" style="background: rgba(0,0,0,0.4); border-color: rgba(255,107,0,0.2); box-shadow: 0 0 40px rgba(0,0,0,0.8);">
+            <div class="max-w-4xl neu-surface p-12 rounded-2xl relative z-10" style="background: #121212; border-color: rgba(255,255,255,0.02); box-shadow: 12px 12px 24px #050505, -12px -12px 24px #191919;">
                 <h1 class="text-6xl md:text-8xl font-display font-bold text-white mb-4 leading-none uppercase tracking-wide flex flex-col items-start">
                     <span class="anim-title-word" style="animation-delay: 0.1s;">Claim Your</span>
-                    <span class="anim-title-word text-brand-primary" style="animation-delay: 0.3s; margin-top: 0.5rem;"><span class="anim-glow inline-block">Territory</span></span>
+                    <span class="anim-title-word text-[#FC2B24]" style="animation-delay: 0.3s; margin-top: 0.5rem;"><span class="anim-cinematic-text">Territory</span></span>
                 </h1>
-                <p class="text-xl md:text-2xl text-gray-300 mb-10 font-medium max-w-2xl border-l-4 border-brand-primary pl-4 uppercase anim-desc">
+                <p class="text-xl md:text-2xl text-[#A8A8A8] mb-10 font-medium max-w-2xl border-l-4 border-[#FC2B24] pl-4 uppercase anim-desc">
                     The City's Premier Football & Cricket Arena. Premium 4G Turf. Pure Adrenaline.
                 </p>
                 <div class="flex flex-wrap gap-4">
-                    <a href="book.html" class="btn-primary bg-brand-primary text-brand-dark font-display font-bold text-xl px-12 py-4 rounded-sm uppercase tracking-widest">Book Pitch Now</a>
-                    <a href="turf.html" class="btn-primary bg-transparent border-2 border-white text-white font-display font-bold text-xl px-12 py-4 rounded-sm uppercase tracking-widest hover:bg-white hover:text-brand-dark">View Specs</a>
+                    <a href="book.html" class="btn-primary font-display font-bold text-xl px-12 py-4 uppercase tracking-widest">Book Pitch Now</a>
+                    <a href="turf.html" class="btn-secondary font-display font-bold text-xl px-12 py-4 uppercase tracking-widest">View Specs</a>
                 </div>
             </div>
         </div>
@@ -218,21 +338,21 @@
     <section id="about" class="py-24 relative z-0">
         <div class="max-w-4xl mx-auto px-6 text-center">
             <div data-aos="fade-up">
-                <h4 class="text-brand-primary font-bold uppercase tracking-widest mb-2" data-aos="fade-up" data-aos-delay="100">Welcome to</h4>
-                <h2 class="text-5xl font-display font-bold mb-6 tracking-wide" data-aos="fade-up" data-aos-delay="200">5TH YARD <span class="text-brand-primary">TURF</span></h2>
-                <p class="text-gray-400 text-lg leading-relaxed mb-6" data-aos="fade-up" data-aos-delay="300">
+                <h4 class="text-[#FC2B24] font-bold uppercase tracking-widest mb-2" data-aos="fade-up" data-aos-delay="100">Welcome to</h4>
+                <h2 class="text-5xl font-display font-bold mb-6 tracking-wide" data-aos="fade-up" data-aos-delay="200">5TH YARD <span class="text-[#FC2B24]">TURF</span></h2>
+                <p class="text-[#A8A8A8] text-lg leading-relaxed mb-6" data-aos="fade-up" data-aos-delay="300">
                     Founded by athletes for athletes, 5TH YARD TURF provides professional-grade facilities accessible to everyone. We noticed a lack of high-quality, well-maintained pitches in the city, so we built our own. 
                 </p>
-                <p class="text-gray-400 text-lg leading-relaxed mb-8" data-aos="fade-up" data-aos-delay="400">
+                <p class="text-[#A8A8A8] text-lg leading-relaxed mb-8" data-aos="fade-up" data-aos-delay="400">
                     Whether you're organizing a highly competitive league match, a corporate tournament, or just a casual kickabout with friends, our state-of-the-art 4G arena guarantees the ultimate sporting experience.
                 </p>
                 <div class="flex justify-center items-center space-x-12 mt-8" data-aos="fade-up" data-aos-delay="500">
                     <div>
-                        <p class="text-4xl font-display font-bold text-brand-primary">10K+</p>
+                        <p class="text-4xl font-display font-bold text-[#FC2B24]">10K+</p>
                         <p class="text-sm text-gray-500 uppercase tracking-widest font-bold mt-1">Matches Played</p>
                     </div>
                     <div>
-                        <p class="text-4xl font-display font-bold text-brand-primary">100%</p>
+                        <p class="text-4xl font-display font-bold text-[#FC2B24]">100%</p>
                         <p class="text-sm text-gray-500 uppercase tracking-widest font-bold mt-1">Pro Surface</p>
                     </div>
                 </div>
@@ -244,31 +364,31 @@
     <section class="py-24 bg-black/50 border-y border-white/5 relative z-0">
         <div class="max-w-7xl mx-auto px-6">
             <div class="text-center mb-16" data-aos="fade-up">
-                <h2 class="text-5xl font-display font-bold text-white uppercase tracking-wider">Play Like a <span class="text-brand-primary">Pro</span></h2>
-                <div class="w-24 h-1 bg-brand-primary mx-auto mt-6"></div>
+                <h2 class="text-5xl font-display font-bold text-white uppercase tracking-wider">Play Like a <span class="text-[#FC2B24]">Pro</span></h2>
+                <div class="w-24 h-1 bg-[#FC2B24] mx-auto mt-6"></div>
             </div>
             
             <div class="grid md:grid-cols-3 gap-8">
-                <div class="glass-card p-8 rounded-xl text-center" data-aos="fade-up" data-aos-delay="0">
-                    <div class="w-16 h-16 bg-brand-primary/20 rounded-full flex items-center justify-center mx-auto mb-6 text-brand-primary border border-brand-primary/50">
+                <div class="neu-surface p-8 rounded-xl text-center" data-aos="fade-up" data-aos-delay="0">
+                    <div class="w-16 h-16 bg-[#FC2B24]/20 rounded-full flex items-center justify-center mx-auto mb-6 text-[#FC2B24] border border-[#FC2B24]/50">
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
                     </div>
                     <h3 class="text-2xl font-display font-bold text-white mb-4 uppercase tracking-wider">FIFA Quality Turf</h3>
-                    <p class="text-gray-400 font-medium leading-relaxed">State-of-the-art 4G synthetic grass engineered for perfect ball roll and maximum joint protection.</p>
+                    <p class="text-[#A8A8A8] font-medium leading-relaxed">State-of-the-art 4G synthetic grass engineered for perfect ball roll and maximum joint protection.</p>
                 </div>
-                <div class="glass-card p-8 rounded-xl text-center" data-aos="fade-up" data-aos-delay="100">
-                    <div class="w-16 h-16 bg-brand-primary/20 rounded-full flex items-center justify-center mx-auto mb-6 text-brand-primary border border-brand-primary/50">
+                <div class="neu-surface p-8 rounded-xl text-center" data-aos="fade-up" data-aos-delay="100">
+                    <div class="w-16 h-16 bg-[#FC2B24]/20 rounded-full flex items-center justify-center mx-auto mb-6 text-[#FC2B24] border border-[#FC2B24]/50">
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                     </div>
                     <h3 class="text-2xl font-display font-bold text-white mb-4 uppercase tracking-wider">Stadium Lighting</h3>
-                    <p class="text-gray-400 font-medium leading-relaxed">500-lux anti-glare LED floodlights that turn night into day, ensuring you never lose sight of the ball.</p>
+                    <p class="text-[#A8A8A8] font-medium leading-relaxed">500-lux anti-glare LED floodlights that turn night into day, ensuring you never lose sight of the ball.</p>
                 </div>
-                <div class="glass-card p-8 rounded-xl text-center" data-aos="fade-up" data-aos-delay="200">
-                    <div class="w-16 h-16 bg-brand-primary/20 rounded-full flex items-center justify-center mx-auto mb-6 text-brand-primary border border-brand-primary/50">
+                <div class="neu-surface p-8 rounded-xl text-center" data-aos="fade-up" data-aos-delay="200">
+                    <div class="w-16 h-16 bg-[#FC2B24]/20 rounded-full flex items-center justify-center mx-auto mb-6 text-[#FC2B24] border border-[#FC2B24]/50">
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
                     <h3 class="text-2xl font-display font-bold text-white mb-4 uppercase tracking-wider">Instant Booking</h3>
-                    <p class="text-gray-400 font-medium leading-relaxed">Secure your slot instantly through our custom online movie-style booking system. No hassle.</p>
+                    <p class="text-[#A8A8A8] font-medium leading-relaxed">Secure your slot instantly through our custom online movie-style booking system. No hassle.</p>
                 </div>
             </div>
         </div>
@@ -280,17 +400,17 @@
             
             <!-- Pricing -->
             <div data-aos="fade-right" data-aos-duration="1000">
-                <h3 class="text-4xl font-display font-bold uppercase tracking-wider mb-8">Transparent <span class="text-brand-primary">Pricing</span></h3>
-                <div class="glass-card p-8 border-l-4 border-l-brand-primary rounded-r-xl relative overflow-hidden transition-transform duration-500 hover:scale-[1.02]">
+                <h3 class="text-4xl font-display font-bold uppercase tracking-wider mb-8">Transparent <span class="text-[#FC2B24]">Pricing</span></h3>
+                <div class="neu-surface p-8 border-l-4 border-l-[#FC2B24] rounded-r-xl relative overflow-hidden transition-transform duration-500 hover:scale-[1.02]">
                     <div class="absolute top-0 right-0 p-4 opacity-10 pointer-events-none transform rotate-12">
                         <svg class="w-32 h-32" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
                     </div>
                     <h4 class="text-2xl font-bold mb-2">Base Rate</h4>
-                    <p class="text-5xl font-display font-bold text-brand-primary mb-6" data-aos="zoom-in" data-aos-delay="200">₹1,100 <span class="text-lg text-gray-400 font-sans font-normal uppercase">/ 1 Hour</span></p>
+                    <p class="text-5xl font-display font-bold text-[#FC2B24] mb-6" data-aos="zoom-in" data-aos-delay="200">₹1,100 <span class="text-lg text-[#A8A8A8] font-sans font-normal uppercase">/ 1 Hour</span></p>
                     
                     <h4 class="text-xl font-bold mb-2 mt-8">Need more time?</h4>
-                    <p class="text-gray-300 mb-6">Extend your game proportionally. No hidden fees.</p>
-                    <ul class="space-y-3 text-gray-400 font-medium">
+                    <p class="text-[#A8A8A8] mb-6">Extend your game proportionally. No hidden fees.</p>
+                    <ul class="space-y-3 text-[#A8A8A8] font-medium">
                         <li class="flex justify-between border-b border-white/10 pb-2" data-aos="fade-up" data-aos-delay="300"><span>+ 30 Minutes</span> <span class="text-white">₹550</span></li>
                         <li class="flex justify-between border-b border-white/10 pb-2" data-aos="fade-up" data-aos-delay="400"><span>1.5 Hours</span> <span class="text-white">₹1,650</span></li>
                         <li class="flex justify-between pb-2" data-aos="fade-up" data-aos-delay="500"><span>2 Hours</span> <span class="text-white">₹2,200</span></li>
@@ -300,27 +420,27 @@
 
             <!-- How it works -->
             <div>
-                <h3 class="text-4xl font-display font-bold uppercase tracking-wider mb-8" data-aos="fade-left">How to <span class="text-brand-primary">Book</span></h3>
+                <h3 class="text-4xl font-display font-bold uppercase tracking-wider mb-8" data-aos="fade-left">How to <span class="text-[#FC2B24]">Book</span></h3>
                 <div class="space-y-8">
                     <div class="flex items-start group" data-aos="fade-left" data-aos-delay="100">
-                        <div class="w-12 h-12 bg-brand-primary text-brand-dark rounded-full flex items-center justify-center font-display font-bold text-2xl flex-shrink-0 mt-1 transition-transform group-hover:scale-110 group-hover:rotate-12">1</div>
+                        <div class="w-12 h-12 bg-[#FC2B24] text-white rounded-full flex items-center justify-center font-display font-bold text-2xl flex-shrink-0 mt-1 transition-transform group-hover:scale-110 group-hover:rotate-12">1</div>
                         <div class="ml-6">
-                            <h4 class="text-2xl font-bold mb-2 group-hover:text-brand-primary transition-colors">Select Your Date & Time</h4>
-                            <p class="text-gray-400">Browse our dynamic 30-day calendar and pick an available 1-hour slot. Live availability ensures no double bookings.</p>
+                            <h4 class="text-2xl font-bold mb-2 group-hover:text-[#FC2B24] transition-colors">Select Your Date & Time</h4>
+                            <p class="text-[#A8A8A8]">Browse our dynamic 30-day calendar and pick an available 1-hour slot. Live availability ensures no double bookings.</p>
                         </div>
                     </div>
                     <div class="flex items-start group" data-aos="fade-left" data-aos-delay="250">
-                        <div class="w-12 h-12 bg-brand-primary text-brand-dark rounded-full flex items-center justify-center font-display font-bold text-2xl flex-shrink-0 mt-1 transition-transform group-hover:scale-110 group-hover:rotate-12">2</div>
+                        <div class="w-12 h-12 bg-[#FC2B24] text-white rounded-full flex items-center justify-center font-display font-bold text-2xl flex-shrink-0 mt-1 transition-transform group-hover:scale-110 group-hover:rotate-12">2</div>
                         <div class="ml-6">
-                            <h4 class="text-2xl font-bold mb-2 group-hover:text-brand-primary transition-colors">Choose Duration</h4>
-                            <p class="text-gray-400">Stick with the standard 1 hour, or toggle the +30 min extension if you need that extra time to settle the score.</p>
+                            <h4 class="text-2xl font-bold mb-2 group-hover:text-[#FC2B24] transition-colors">Choose Duration</h4>
+                            <p class="text-[#A8A8A8]">Stick with the standard 1 hour, or toggle the +30 min extension if you need that extra time to settle the score.</p>
                         </div>
                     </div>
                     <div class="flex items-start group" data-aos="fade-left" data-aos-delay="400">
-                        <div class="w-12 h-12 bg-brand-primary text-brand-dark rounded-full flex items-center justify-center font-display font-bold text-2xl flex-shrink-0 mt-1 transition-transform group-hover:scale-110 group-hover:rotate-12">3</div>
+                        <div class="w-12 h-12 bg-[#FC2B24] text-white rounded-full flex items-center justify-center font-display font-bold text-2xl flex-shrink-0 mt-1 transition-transform group-hover:scale-110 group-hover:rotate-12">3</div>
                         <div class="ml-6">
-                            <h4 class="text-2xl font-bold mb-2 group-hover:text-brand-primary transition-colors">Confirm & Play</h4>
-                            <p class="text-gray-400">Enter your details and secure your booking instantly. Just show up with your team and dominate the pitch.</p>
+                            <h4 class="text-2xl font-bold mb-2 group-hover:text-[#FC2B24] transition-colors">Confirm & Play</h4>
+                            <p class="text-[#A8A8A8]">Enter your details and secure your booking instantly. Just show up with your team and dominate the pitch.</p>
                         </div>
                     </div>
                 </div>
@@ -330,7 +450,7 @@
     </section>
 
     <!-- Image Looping Gallery -->
-    <section class="img-marquee-wrapper border-y border-brand-primary/20">
+    <section class="img-marquee-wrapper border-y border-[#FC2B24]/20">
         <div class="img-marquee-content">
             <img src="https://upload.wikimedia.org/wikipedia/commons/0/02/Panorama_of_Anfield_with_new_main_stand_%2829676137824%29.jpg" alt="Anfield">
             <img src="https://upload.wikimedia.org/wikipedia/commons/a/ad/Camp_Nou_aerial.jpg" alt="Camp Nou">
@@ -354,22 +474,22 @@
     <footer class="bg-black pt-20 pb-10">
         <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-12 mb-12">
             <div data-aos="fade-right">
-                <a href="index.html" class="text-4xl font-display font-bold tracking-widest text-white mb-6 inline-block">5TH YARD <span class="text-brand-primary">TURF</span></a>
-                <p class="text-gray-400 leading-relaxed text-sm">
+                <a href="index.html" class="text-4xl font-display font-bold tracking-widest text-white mb-6 inline-block">5TH YARD <span class="text-[#FC2B24]">TURF</span></a>
+                <p class="text-[#A8A8A8] leading-relaxed text-sm">
                     The premium multi-purpose turf arena built for those who take the game seriously. Eat. Sleep. Play. Repeat.
                 </p>
             </div>
             <div data-aos="fade-up">
                 <h4 class="text-white font-bold uppercase tracking-widest mb-6">Quick Links</h4>
-                <ul class="space-y-3 text-gray-400 text-sm font-medium">
-                    <li><a href="index.html" class="hover:text-brand-primary transition">Home</a></li>
-                    <li><a href="turf.html" class="hover:text-brand-primary transition">Turf Specifications</a></li>
-                    <li><a href="book.html" class="hover:text-brand-primary transition">Book Your Slot</a></li>
+                <ul class="space-y-3 text-[#A8A8A8] text-sm font-medium">
+                    <li><a href="index.html" class="hover:text-[#FC2B24] transition">Home</a></li>
+                    <li><a href="turf.html" class="hover:text-[#FC2B24] transition">Turf Specifications</a></li>
+                    <li><a href="book.html" class="hover:text-[#FC2B24] transition">Book Your Slot</a></li>
                 </ul>
             </div>
             <div data-aos="fade-left">
                 <h4 class="text-white font-bold uppercase tracking-widest mb-6">Contact Us</h4>
-                <ul class="space-y-3 text-gray-400 text-sm font-medium">
+                <ul class="space-y-3 text-[#A8A8A8] text-sm font-medium">
                     <li>📍 123 Sports Avenue, City Center</li>
                     <li>📞 +91 98765 43210</li>
                     <li>✉️ play@5thyardturf.com</li>
@@ -387,7 +507,7 @@
         particlesJS("particles-js", {
             particles: {
                 number: { value: 60, density: { enable: true, value_area: 800 } },
-                color: { value: "#ff6b00" },
+                color: { value: "#FC2B24" },
                 shape: { type: "circle" },
                 opacity: { value: 0.5, random: true },
                 size: { value: 3, random: true },
@@ -439,11 +559,11 @@
             
             // Navbar color transition
             if (scrolled > 50) {
-                nav.classList.add('bg-brand-dark', 'shadow-lg');
-                nav.classList.remove('bg-brand-dark/80');
+                nav.classList.add('bg-[#0A0A0A]', 'shadow-lg');
+                nav.classList.remove('bg-[#0A0A0A]/80');
             } else {
-                nav.classList.add('bg-brand-dark/80');
-                nav.classList.remove('bg-brand-dark', 'shadow-lg');
+                nav.classList.add('bg-[#0A0A0A]/80');
+                nav.classList.remove('bg-[#0A0A0A]', 'shadow-lg');
             }
 
             // Parallax effect for hero video
